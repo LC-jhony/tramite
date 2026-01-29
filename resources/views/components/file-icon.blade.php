@@ -1,0 +1,1 @@
+<x-fileicon :file="$getRecord()" />
