@@ -61,7 +61,7 @@ class MovementsTable
                     ->label('Acción')
                     ->searchable()
                     ->badge()
-                    ->color(fn(string $state): string => MovementAction::tryFrom($state)?->getColor() ?? 'gray'),
+                    ->color(fn (MovementAction $state): ?string => $state->getColor()),
                 TextColumn::make('destinationOffice.name')
                     ->label('Oficina Destino')
                     ->color('warning')
@@ -82,7 +82,7 @@ class MovementsTable
                     ->label('Estado')
                     ->badge()
                     ->searchable()
-                    ->color(fn(string $state): string => MovementStatus::tryFrom($state)?->getColor() ?? 'gray'),
+                    ->color(fn (MovementStatus $state): ?string => $state->getColor()),
 
                 TextColumn::make('created_at')
                     ->label('Creado')
@@ -110,9 +110,10 @@ class MovementsTable
                 ]),
             ]);
     }
+
     private static function getForwardAction(): Action
     {
-        return  Action::make('derivar')
+        return Action::make('derivar')
             ->label('Derivar')
             ->color('success')
             ->icon(Heroicon::RocketLaunch)
@@ -135,16 +136,15 @@ class MovementsTable
                 Select::make('destination_user_id')
                     ->label('Usuario de Destino')
                     ->options(
-                        fn(callable $get) =>
-                        $get('destination_office_id')
+                        fn (callable $get) => $get('destination_office_id')
                             ? User::where('office_id', $get('destination_office_id'))
-                            ->pluck('name', 'id')
+                                ->pluck('name', 'id')
                             : []
                     )
                     ->searchable()
                     ->preload()
                     ->live()
-                    ->visible(fn(Get $get) => filled($get('destination_office_id')))
+                    ->visible(fn (Get $get) => filled($get('destination_office_id')))
                     ->helperText('Opcional: selecciona un usuario específico')
                     ->disabled()
                     ->dehydrated(),
@@ -186,10 +186,10 @@ class MovementsTable
                     ->columnSpanFull()
                     ->schema([
                         View::make('pages.file-view')
-                            ->viewData(fn($record) => [
-                                'documentId' => $record->document_id
+                            ->viewData(fn ($record) => [
+                                'documentId' => $record->document_id,
                             ])->columnSpanFull(),
-                    ])
+                    ]),
             ])
             ->action(function (Document $record, array $data) {
                 DB::transaction(function () use ($record, $data) {
@@ -208,7 +208,7 @@ class MovementsTable
                         'status' => DocumentStatus::IN_PROCESS,
                         'id_office_destination' => $data['destination_office_id'],
                     ]);
-                    if (isset($data['attached_files']) && !empty($data['attached_files'])) {
+                    if (isset($data['attached_files']) && ! empty($data['attached_files'])) {
                         foreach ($data['attached_files'] as $filePath) {
                             if (Storage::exists($filePath)) {
                                 $fileName = basename($filePath);
@@ -231,6 +231,7 @@ class MovementsTable
                 return $record->document->status !== DocumentStatus::REGISTERED || Auth::id() !== $record->document->user_id;
             });
     }
+
     private static function getRejectAction(): Action
     {
         return Action::make('reject')
@@ -244,7 +245,7 @@ class MovementsTable
             ->form([
                 TextInput::make('document_id')
                     ->label('Caso')
-                    ->default(fn($record) => $record?->document?->case_number)
+                    ->default(fn ($record) => $record?->document?->case_number)
                     ->disabled()
                     ->dehydrated(false),
                 RichEditor::make('observation')

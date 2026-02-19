@@ -7,7 +7,7 @@
             "command": [
                 "wsl.exe",
                 "/usr/bin/php8.4",
-                "/home/jhony/Sites/tramite/artisan",
+                "/home/linux/Sites/tramite/artisan",
                 "boost:mcp"
             ]
         }

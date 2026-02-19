@@ -1,216 +1,171 @@
 # AGENTS.md
 
-This file contains essential information for agentic coding agents working in this repository.
+Essential information for agentic coding agents working in this repository.
 
 ## Project Overview
 
-This is a Laravel 12 application using PHP 8.4 with Filament v5 for admin interfaces. It's a document management system ("tramite" meaning "procedure/process" in Spanish) with document tracking, movements, and file management capabilities.
+Laravel 12 document management system ("tramite" = procedure/process) with Filament v5 admin panel. Spanish terminology throughout (tramite, gestion, origen).
 
-## Tech Stack & Versions
+## Tech Stack
 
-- **PHP**: 8.4.16
-- **Laravel**: 12.48.1
-- **Filament**: 5.1.0 (admin panel framework)
-- **Livewire**: 4.0.3
-- **Pest**: 4.3.1 (testing framework)
-- **Tailwind CSS**: 4.1.18
-- **Database**: MariaDB
-- **Node.js**: Vite 7.0.7 for frontend bundling
+- PHP 8.4, Laravel 12, Filament v5, Livewire v4
+- Pest 4 for testing, Tailwind CSS v4, MariaDB, Vite 7
 
-## Build/Test/Development Commands
+## Commands
 
 ### Development
 ```bash
-# Full development stack (server + queue + logs + vite)
-composer run dev
-
-# Start Laravel server only
-php artisan serve
-
-# Start Vite for frontend
-npm run dev
-
-# Build frontend assets
-npm run build
+composer run dev          # Full stack (server + queue + logs + vite)
+php artisan serve         # Laravel server only
+npm run dev               # Vite frontend
+npm run build             # Build assets
 ```
 
-### Testing
+### Testing (Pest)
 ```bash
-# Run all tests
-php artisan test --compact
-
-# Run specific test file
-php artisan test --compact tests/Feature/ExampleTest.php
-
-# Run filtered test by name
-php artisan test --compact --filter=testName
-
-# Run Pest directly
-./vendor/bin/pest
-
-# Run tests with coverage (if configured)
-php artisan test --coverage
+php artisan test --compact                           # All tests
+php artisan test --compact tests/Feature/XxxTest.php # Single file
+php artisan test --compact --filter=testName         # Single test by name
+./vendor/bin/pest                                     # Direct Pest
 ```
 
 ### Code Quality
 ```bash
-# Format code with Laravel Pint (required before commits)
-vendor/bin/pint --dirty
-
-# Check formatting without fixing
-vendor/bin/pint --test
-
-# Generate IDE helper files
-php artisan ide-helper:generate
-php artisan ide-helper:models --reset
+vendor/bin/pint --dirty    # Format changed files (run before commit)
+vendor/bin/pint --test     # Check without fixing
 ```
 
 ### Database
 ```bash
-# Run migrations
-php artisan migrate
-
-# Fresh migration with seeding
-php artisan migrate:fresh --seed
-
-# Create new migration
-php artisan make:migration create_table_name
-
-# Factory/Seeder generation
-php artisan make:model ModelName -mfs
+php artisan migrate              # Run migrations
+php artisan migrate:fresh --seed # Fresh with seeders
+php artisan make:model Name -mfs # Model + migration + factory + seeder
 ```
 
-## Code Style Guidelines
+### Artisan Scaffolding
+```bash
+php artisan make:test FeatureTest --pest           # Feature test
+php artisan make:test UnitTest --pest --unit       # Unit test
+php artisan make:filament-resource ModelName       # Filament resource
+php artisan make:livewire ComponentName            # Livewire component
+```
+
+## Code Style
 
 ### PHP Standards
-- **Indentation**: 4 spaces (configured in .editorconfig)
-- **Line endings**: LF (Unix style)
-- **Trailing whitespace**: Trimmed
-- **PHP version**: 8.2+ features allowed
-- **Constructor Property Promotion**: Use PHP 8+ syntax in `__construct()`
-- **Type Declarations**: Always use explicit return types and parameter types
-- **Braces**: Always use curly braces for control structures, even single lines
+- 4-space indentation, LF line endings, no trailing whitespace
+- Always use curly braces for control structures
+- Constructor property promotion: `public function __construct(public Service $service) {}`
+- Explicit return types and parameter types required
+- No empty `__construct()` unless private
 
 ### Naming Conventions
-- **Models**: PascalCase (User, Document, Movement)
-- **Enums**: PascalCase with descriptive keys (DocumentStatus, MovementAction)
-- **Controllers**: PascalCase + "Controller" suffix
-- **Methods**: camelCase with descriptive names (isRegisteredForDiscounts, not discount())
-- **Variables**: camelCase, descriptive names
-- **Database Tables**: snake_case plural (documents, movements)
-- **Columns**: snake_case (document_number, reception_date)
+- Models: PascalCase (`User`, `Document`)
+- Methods/variables: camelCase, descriptive (`isRegisteredForDiscounts`)
+- Database: snake_case plural tables, snake_case columns
+- Enums: TitleCase keys (`REGISTERED`, `IN_PROCESS`)
 
-### Laravel-Specific Patterns
+### Imports
+- Single-line `use` statements, grouped order: Laravel → third-party → app
+- Remove unused imports (Pint handles this)
 
-#### Models
-- Use Eloquent relationships with proper return type hints
-- Place casts in `casts()` method rather than `$casts` property (follow existing convention)
+### Comments
+- Prefer PHPDoc blocks over inline comments
+- Add array shape type definitions when helpful
+
+## Laravel Patterns
+
+### Models
+- Eloquent relationships with return type hints
+- Casts in `casts()` method, not `$casts` property
 - Use fillable arrays for mass assignment
-- Create factories and seeders for all models
+- Create factories/seeders for all models
 
-#### Controllers & Validation
-- Create Form Request classes for validation (not inline in controllers)
-- Use proper HTTP status methods (`assertForbidden`, `assertNotFound` vs `assertStatus(403)`)
+### Controllers & Validation
+- Form Request classes for validation (not inline)
+- Include validation rules AND custom error messages
+- Check sibling Form Requests for array vs string validation rules
 
-#### Filament Resources
-- Use static `make()` methods for component initialization
-- Follow the pattern: Resource → Pages → Schemas/Tables
-- Use `Get $get` for conditional form field logic
-- Use `state()` with Closure for computed column values
+### Configuration
+- Use `config('app.name')`, never `env('APP_NAME')` outside config files
 
-#### Enums
-- Keys should be TitleCase in enums (REGISTERED, IN_PROCESS)
-- Implement Filament's `HasLabel` interface for Filament integration
+### Database
+- Prefer `Model::query()` over `DB::`
+- Eager load to prevent N+1 problems
+- When modifying columns in migrations, include all previously defined attributes
 
-### File Structure Conventions
-- **Models**: `app/Models/`
-- **Enums**: `app/Enum/`
-- **Filament Resources**: `app/Filament/Resources/{ModelName}/`
-- **Livewire Components**: `app/Livewire/`
-- **Factories**: `database/factories/`
-- **Seeders**: `database/seeders/`
-- **Migrations**: `database/migrations/`
-- **Tests**: `tests/Feature/` and `tests/Unit/`
+## Filament Patterns
 
-### Import Organization
-- Use grouped imports with single-line `use` statements
-- Order: Laravel/framework → third-party → application imports
-- Remove unused imports (Pint will handle this)
+### Components
+- Static `make()` methods for initialization
+- Layout: `Filament\Schemas\Components\` (Grid, Section, Fieldset, Tabs)
+- Form fields: `Filament\Forms\Components\` (TextInput, Select)
+- Infolists: `Filament\Infolists\Components\` (TextEntry, IconEntry)
+- Utilities: `Filament\Schemas\Components\Utilities\Get`, `Set`
+- Actions: `Filament\Actions\` (no `Filament\Tables\Actions\`)
+- Icons: `Filament\Support\Icons\Heroicon` enum
 
-### Error Handling
-- Use Laravel's built-in exception handling
-- Implement proper validation in Form Requests
-- Use try-catch blocks only when necessary
-- Log errors appropriately using Laravel's logging system
+### Key Patterns
+```php
+// Conditional visibility
+TextInput::make('company_name')
+    ->visible(fn (Get $get): bool => $get('type') === 'business'),
 
-### Frontend (Tailwind CSS v4)
-- Use Tailwind v4 `@import "tailwindcss"` syntax, not `@tailwind` directives
-- Dark mode support with `dark:` prefix when existing pages support it
-- Use gap utilities for spacing between items, not margins
-- Configuration is CSS-first using `@theme` directive, no separate config file
+// Computed column
+TextColumn::make('full_name')
+    ->state(fn (User $record): string => "{$record->first_name} {$record->last_name}"),
+```
 
-### Testing Best Practices
-- Write tests using Pest syntax with descriptive test names
-- Use factories for test data; check existing factory states first
-- Test happy paths, failure paths, and edge cases
-- Use datasets for repetitive scenarios (especially validation rules)
+### File Visibility
+- Files are `private` by default in Filament
+- Use `->visibility('public')` for public access
+
+## Testing (Pest)
+
+### Conventions
+- Use factories; check existing factory states first
+- Test happy paths, failure paths, edge cases
+- Use datasets for validation rule tests
 - Use `assertForbidden`/`assertNotFound` instead of `assertStatus(403)`
-- Browser tests go in `tests/Browser/` directory
+- Browser tests go in `tests/Browser/`
 
-### Code Quality Requirements
+### Filament Testing
+```php
+livewire(CreateUser::class)
+    ->fillForm(['name' => 'Test', 'email' => 'test@example.com'])
+    ->call('create')
+    ->assertNotified()
+    ->assertRedirect();
+```
+
+## Tailwind CSS v4
+
+- Import: `@import "tailwindcss"` (not `@tailwind` directives)
+- Config: CSS-first with `@theme` directive, no `tailwind.config.js`
+- Spacing: Use `gap-*` utilities, not margins between items
+- Dark mode: Use `dark:` prefix if existing pages support it
+
+## Important Rules
+
+- **Never** change dependencies without approval
+- **Never** remove tests without approval
+- **Always** check existing patterns before creating new ones
+- **Always** use `php artisan make:` commands for scaffolding
 - **Always** run `vendor/bin/pint --dirty` before committing
-- Use proper PHPDoc blocks for complex logic
-- Add array shape type definitions for complex arrays when helpful
-- Prefer PHPDoc blocks over inline comments for documentation
+- **Always** use `--no-interaction` with Artisan commands
 
-## Important Notes
-- This is a document management system with Spanish terms (tramite, gestion, origen)
-- File visibility in Filament is `private` by default - use `->visibility('public')` for public access
-- Never change dependencies without approval
-- Always check existing patterns before creating new ones
-- Use `php artisan make:` commands for scaffolding new files
-- Tests live in `tests/` directory and should not be removed without approval
+## Laravel 12 Structure
 
-## Laravel Boost MCP Tools
-This project includes Laravel Boost with enhanced MCP server tools:
-- **Database Query**: `laravel-boost_database-query` for read-only SQL operations
-- **Database Schema**: `laravel-boost_database-schema` to inspect table structure  
-- **Application Info**: `laravel-boost_application-info` for package versions and environment
-- **Routes**: `laravel-boost_list-routes` to explore API endpoints
-- **Logs**: `laravel-boost_read-log-entries` and `laravel-boost_browser-logs` for debugging
-- **Config**: `laravel-boost_get-config` and `laravel-boost_list-available-config-keys`
-- **Artisan**: `laravel-boost_list-artisan-commands` to discover commands
-- **Tinker**: `laravel-boost_tinker` for PHP code execution
-- **Search Docs**: `laravel-boost_search-docs` for version-specific documentation
+- Middleware configured in `bootstrap/app.php` via `withMiddleware()`
+- `bootstrap/providers.php` for service providers
+- No `app/Http/Kernel.php` or `app/Console/Kernel.php`
+- Console commands in `app/Console/Commands/` auto-registered
 
-## Common Artisan Commands
-```bash
-# List all available commands
-php artisan list
+## File Locations
 
-# Make model with migration, factory, seeder
-php artisan make:model ModelName -mfs
-
-# Make Filament resource
-php artisan make:filament-resource ModelName
-
-# Make Livewire component
-php artisan make:livewire ComponentName
-
-# Make test
-php artisan make:test FeatureTest --pest
-php artisan make:test UnitTest --pest --unit
-```
-
-### Testing Rules (from .github/copilot-instructions.md)
-```bash
-# Run minimal tests before finalizing
-php artisan test --compact --filter=testName
-
-# Browser testing (Pest 4)
-tests live in tests/Browser/ directory
-
-# Use Pest datasets for validation rules
-# Filament testing: use livewire() or Livewire::test()
-# Test with specific methods: assertForbidden, assertNotFound
-```
+- Models: `app/Models/`
+- Enums: `app/Enum/`
+- Filament Resources: `app/Filament/Resources/{ModelName}/`
+- Livewire: `app/Livewire/`
+- Factories: `database/factories/`
+- Tests: `tests/Feature/`, `tests/Unit/`, `tests/Browser/`
