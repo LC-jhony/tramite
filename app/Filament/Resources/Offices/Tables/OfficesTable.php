@@ -18,6 +18,9 @@ class OfficesTable
     {
         return $table
             ->striped()
+            ->paginated([5, 10, 25, 50, 100, 'all'])
+            ->defaultPaginationPageOption(5)
+            ->searchable()
             ->groups([
                 Group::make('parentOffice.name')
                     ->label('<strong><em>Office</em></strong>')
