@@ -40,7 +40,7 @@ class DocumentsTable
                 TextColumn::make('origen')
                     ->label('Origén')
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'Interno' => 'info',
                         'Externo' => 'danger',
                     }),
@@ -50,6 +50,7 @@ class DocumentsTable
                     ->color(function (string $state): string {
                         $colors = ['primary', 'success', 'info', 'warning', 'danger', 'gray'];
                         $index = abs(crc32($state)) % count($colors);
+
                         return $colors[$index];
                     }),
                 TextColumn::make('user.name')
@@ -66,7 +67,7 @@ class DocumentsTable
                 TextColumn::make('status')
                     ->label('Estado')
                     ->badge()
-                    ->color(fn(DocumentStatus $state): string => $state->getColor()),
+                    ->color(fn (DocumentStatus $state): string => $state->getColor()),
                 TextColumn::make('created_at')
                     ->label('Creado')
                     ->dateTime()
@@ -92,9 +93,10 @@ class DocumentsTable
                 ]),
             ]);
     }
+
     private static function getForwardAction(): Action
     {
-        return  Action::make('derivar')
+        return Action::make('derivar')
             ->label('Derivar')
             ->color('success')
             ->icon(Heroicon::RocketLaunch)
@@ -115,16 +117,15 @@ class DocumentsTable
                 Select::make('destination_user_id')
                     ->label('Usuario de Destino')
                     ->options(
-                        fn(callable $get) =>
-                        $get('destination_office_id')
+                        fn (callable $get) => $get('destination_office_id')
                             ? User::where('office_id', $get('destination_office_id'))
-                            ->pluck('name', 'id')
+                                ->pluck('name', 'id')
                             : []
                     )
                     ->searchable()
                     ->preload()
                     ->live()
-                    ->visible(fn(Get $get) => filled($get('destination_office_id')))
+                    ->visible(fn (Get $get) => filled($get('destination_office_id')))
                     ->helperText('Opcional: selecciona un usuario específico')
                     ->disabled()
                     ->dehydrated(),
@@ -135,7 +136,11 @@ class DocumentsTable
                     ->maxLength(500)
                     ->placeholder('Instrucciones específicas para el destinatario'),
             ])
-            ->action(function (Document $record, array $data) {
+            ->action(function ($record, array $data) {
+                if (! $record instanceof Document) {
+                    return;
+                }
+
                 DB::transaction(function () use ($record, $data) {
                     $record->movements()->create([
                         'document_id' => $record->id,
@@ -154,7 +159,11 @@ class DocumentsTable
                     ]);
                 });
             })
-            ->disabled(function (Document $record): bool {
+            ->disabled(function ($record): bool {
+                if (! $record instanceof Document) {
+                    return true;
+                }
+
                 return $record->status !== DocumentStatus::REGISTERED || Auth::id() !== $record->user_id;
             });
     }

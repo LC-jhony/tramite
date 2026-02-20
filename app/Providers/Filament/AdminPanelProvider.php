@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -18,6 +19,8 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
+
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -27,6 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->login()
             ->colors([
                 'primary' => Color::Amber,
@@ -40,6 +44,16 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 AccountWidget::class,
                 FilamentInfoWidget::class,
+            ])
+            ->plugins([
+                FilamentShieldPlugin::make(),
+                AuthUIEnhancerPlugin::make()
+                    ->showEmptyPanelOnMobile(false)
+                    ->formPanelPosition('left')
+                    ->formPanelWidth('40%')
+                    ->emptyPanelBackgroundImageOpacity('70%')
+                    ->emptyPanelBackgroundImageUrl('https://images.pexels.com/photos/466685/pexels-photo-466685.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')
+
             ])
             ->middleware([
                 EncryptCookies::class,

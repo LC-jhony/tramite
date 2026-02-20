@@ -6,6 +6,7 @@ use App\Filament\User\Resources\Documents\Pages\CreateDocument;
 use App\Filament\User\Resources\Documents\Pages\EditDocument;
 use App\Filament\User\Resources\Documents\Pages\ListDocuments;
 use App\Filament\User\Resources\Documents\Pages\ViewDocument;
+use App\Filament\User\Resources\Documents\RelationManagers\MovementsRelationManager;
 use App\Filament\User\Resources\Documents\Schemas\DocumentForm;
 use App\Filament\User\Resources\Documents\Schemas\DocumentInfolist;
 use App\Filament\User\Resources\Documents\Tables\DocumentsTable;
@@ -43,7 +44,7 @@ class DocumentResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            MovementsRelationManager::class,
         ];
     }
 
@@ -56,6 +57,7 @@ class DocumentResource extends Resource
             'edit' => EditDocument::route('/{record}/edit'),
         ];
     }
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()

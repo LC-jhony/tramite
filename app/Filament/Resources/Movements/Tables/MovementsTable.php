@@ -5,7 +5,6 @@ namespace App\Filament\Resources\Movements\Tables;
 use App\Enum\DocumentStatus;
 use App\Enum\MovementAction;
 use App\Enum\MovementStatus;
-use App\Models\Document;
 use App\Models\Movement;
 use App\Models\Office;
 use App\Models\User;
@@ -60,7 +59,7 @@ class MovementsTable
                     ->label('Acción')
                     ->searchable()
                     ->badge()
-                    ->color(fn(string $state): string => MovementAction::tryFrom($state)?->getColor() ?? 'gray'),
+                    ->color(fn (MovementAction $state): ?string => $state->getColor()),
                 TextColumn::make('destinationOffice.name')
                     ->label('Oficina Destino')
                     ->color('warning')
@@ -81,7 +80,7 @@ class MovementsTable
                     ->label('Estado')
                     ->badge()
                     ->searchable()
-                    ->color(fn(string $state): string => MovementStatus::tryFrom($state)?->getColor() ?? 'gray'),
+                    ->color(fn (MovementStatus $state): ?string => $state->getColor()),
 
                 TextColumn::make('created_at')
                     ->label('Creado')
@@ -108,9 +107,10 @@ class MovementsTable
                 ]),
             ]);
     }
+
     private static function getForwardAction(): Action
     {
-        return  Action::make('derivar')
+        return Action::make('derivar')
             ->label('Derivar')
             ->color('success')
             ->icon(Heroicon::RocketLaunch)
@@ -133,16 +133,15 @@ class MovementsTable
                 Select::make('destination_user_id')
                     ->label('Usuario de Destino')
                     ->options(
-                        fn(callable $get) =>
-                        $get('destination_office_id')
+                        fn (callable $get) => $get('destination_office_id')
                             ? User::where('office_id', $get('destination_office_id'))
-                            ->pluck('name', 'id')
+                                ->pluck('name', 'id')
                             : []
                     )
                     ->searchable()
                     ->preload()
                     ->live()
-                    ->visible(fn(Get $get) => filled($get('destination_office_id')))
+                    ->visible(fn (Get $get) => filled($get('destination_office_id')))
                     ->helperText('Opcional: selecciona un usuario específico')
                     ->disabled()
                     ->dehydrated(),
@@ -184,16 +183,22 @@ class MovementsTable
                     ->columnSpanFull()
                     ->schema([
                         View::make('pages.file-view')
-                            ->viewData(fn($record) => [
-                                'documentId' => $record->document_id
+                            ->viewData(fn ($record) => [
+                                'documentId' => $record->document_id,
                             ])->columnSpanFull(),
-                    ])
+                    ]),
             ])
-            ->action(function (Document $record, array $data) {
-                DB::transaction(function () use ($record, $data) {
-                    $record->movements()->create([
-                        'document_id' => $record->id,
-                        'origin_office_id' => $record->area_origen_id,
+            ->action(function (Movement $record, array $data) {
+                $document = $record->document;
+
+                DB::transaction(function () use ($document, $record, $data) {
+                    $record->update([
+                        'status' => MovementStatus::COMPLETED,
+                    ]);
+
+                    $document->movements()->create([
+                        'document_id' => $document->id,
+                        'origin_office_id' => Auth::user()->office_id,
                         'origin_user_id' => Auth::id(),
                         'destination_office_id' => $data['destination_office_id'],
                         'destination_user_id' => $data['destination_user_id'],
@@ -202,31 +207,32 @@ class MovementsTable
                         'receipt_date' => now(),
                         'status' => MovementStatus::PENDING,
                     ]);
-                    $record->update([
+                    $document->update([
                         'status' => DocumentStatus::IN_PROCESS,
                         'id_office_destination' => $data['destination_office_id'],
                     ]);
-                    if (isset($data['attached_files']) && !empty($data['attached_files'])) {
+                    if (isset($data['attached_files']) && ! empty($data['attached_files'])) {
                         foreach ($data['attached_files'] as $filePath) {
                             if (Storage::exists($filePath)) {
                                 $fileName = basename($filePath);
                                 $mimeType = Storage::mimeType($filePath);
                                 $size = Storage::size($filePath);
 
-                                $record->files()->create([
+                                $document->files()->create([
                                     'filename' => $fileName,
                                     'path' => $filePath,
                                     'mime_type' => $mimeType,
                                     'size' => $size,
-                                    'uploaded_by' => auth()->id(),
+                                    'uploaded_by' => Auth::id(),
                                 ]);
                             }
                         }
                     }
                 });
             });
-        //->disabled(fn($record) => $record->status !== DocumentStatus::REGISTERED);
+        // ->disabled(fn($record) => $record->status !== DocumentStatus::REGISTERED);
     }
+
     private static function getRejectAction(): Action
     {
         return Action::make('reject')
@@ -240,7 +246,7 @@ class MovementsTable
             ->form([
                 TextInput::make('document_id')
                     ->label('Caso')
-                    ->default(fn($record) => $record?->document?->case_number)
+                    ->default(fn ($record) => $record?->document?->case_number)
                     ->disabled()
                     ->dehydrated(false),
                 RichEditor::make('observation')
@@ -249,26 +255,34 @@ class MovementsTable
                     ->placeholder('Escriba aquí la observación del rechazo')
                     ->columnSpanFull(),
             ])
-            ->action(function (Document $record, array $data) {
-                DB::transaction(function () use ($record, $data) {
-                    $record->movements()->create([
-                        'document_id' => $record->id,
-                        'origin_office_id' => auth()->user()->office_id ?? $record->id_office_destination,
-                        'origin_user_id' => Auth::id(),
-                        'destination_office_id' => $data['destination_office_id'],
-                        'destination_user_id' => $data['destination_user_id'],
-                        'action' => MovementAction::RECHAZADO,
-                        'indication' => $data['indication'] ?? null,
-                        'receipt_date' => now(),
-                        'status' => MovementStatus::REJECTED,
-                    ]);
+            ->action(function (Movement $record, array $data) {
+                $document = $record->document;
+
+                DB::transaction(function () use ($document, $record, $data) {
                     $record->update([
+                        'status' => MovementStatus::REJECTED,
+                        'observation' => $data['observation'],
+                    ]);
+
+                    $document->movements()->create([
+                        'document_id' => $document->id,
+                        'origin_office_id' => Auth::user()->office_id ?? $record->origin_office_id,
+                        'origin_user_id' => Auth::id(),
+                        'destination_office_id' => $record->origin_office_id,
+                        'destination_user_id' => $record->origin_user_id,
+                        'action' => MovementAction::RECHAZADO,
+                        'indication' => null,
+                        'observation' => $data['observation'],
+                        'receipt_date' => now(),
+                        'status' => MovementStatus::PENDING,
+                    ]);
+                    $document->update([
                         'status' => DocumentStatus::REJECTED,
                     ]);
                 });
             })
             ->disabled(function (Movement $record): bool {
-                return $record->status !== MovementStatus::PENDING 
+                return $record->status !== MovementStatus::PENDING
                     || Auth::id() !== $record->destination_user_id
                     || $record->document->status === DocumentStatus::REJECTED;
             });

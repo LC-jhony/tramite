@@ -51,9 +51,26 @@ class ReceptionDocument extends Page implements HasTable
             ->query(
                 Document::query()
                     ->with(['latestMovement.originOffice', 'latestMovement.destinationOffice', 'areaOrigen'])
-                    ->whereHas('latestMovement', function ($query) {
-                        $query->where('destination_office_id', Auth::user()->office_id)
-                            ->whereIn('status', [MovementStatus::PENDING, MovementStatus::RECEIVED]);
+                    ->where(function ($query) {
+                        $query->whereHas('latestMovement', function ($q) {
+                            $q->where('destination_office_id', Auth::user()->office_id)
+                                ->whereIn('status', [
+                                    MovementStatus::PENDING,
+                                    MovementStatus::RECEIVED,
+                                    MovementStatus::COMPLETED,
+                                    MovementStatus::REJECTED,
+                                ]);
+                        })
+                            ->orWhere(function ($q) {
+                                $q->whereHas('latestMovement', function ($subQ) {
+                                    $subQ->where('origin_office_id', Auth::user()->office_id)
+                                        ->whereIn('status', [
+                                            MovementStatus::PENDING,
+                                            MovementStatus::COMPLETED,
+                                            MovementStatus::REJECTED,
+                                        ]);
+                                });
+                            });
                     })
             )
             ->columns([
@@ -68,7 +85,7 @@ class ReceptionDocument extends Page implements HasTable
                 TextColumn::make('latestMovement.action')
                     ->label('Acción')
                     ->badge()
-                    ->color(fn(MovementAction $state): string => $state->getColor()),
+                    ->color(fn (MovementAction $state): string => $state->getColor()),
                 TextColumn::make('latestMovement.receipt_date')
                     ->label('Fecha de Derivación')
                     ->date()
@@ -76,7 +93,7 @@ class ReceptionDocument extends Page implements HasTable
                 TextColumn::make('latestMovement.status')
                     ->label('Estado del Movimiento')
                     ->badge()
-                    ->color(fn(MovementStatus $state): string => $state->getColor()),
+                    ->color(fn (MovementStatus $state): string => $state->getColor()),
                 TextColumn::make('subject')
                     ->label('Asunto')
                     ->limit(50)
@@ -112,12 +129,12 @@ class ReceptionDocument extends Page implements HasTable
                     }
                 });
             })
-            ->visible(function (Document $record): bool {
+            ->disabled(function (Document $record): bool {
                 $latestMovement = $record->latestMovement;
 
-                return $latestMovement
-                    && $latestMovement->status === MovementStatus::PENDING
-                    && $latestMovement->destination_office_id === Auth::user()->office_id;
+                return ! $latestMovement
+                    || $latestMovement->status !== MovementStatus::PENDING
+                    || $latestMovement->destination_office_id !== Auth::user()->office_id;
             })
             ->successNotificationTitle('Documento recepcionado correctamente');
     }
@@ -147,18 +164,16 @@ class ReceptionDocument extends Page implements HasTable
                 Select::make('destination_user_id')
                     ->label('Usuario de Destino')
                     ->options(
-                        fn(callable $get) => $get('destination_office_id')
+                        fn (callable $get) => $get('destination_office_id')
                             ? User::where('office_id', $get('destination_office_id'))
-                            ->pluck('name', 'id')
+                                ->pluck('name', 'id')
                             : []
                     )
                     ->searchable()
                     ->preload()
                     ->live()
-                    ->visible(fn(Get $get) => filled($get('destination_office_id')))
-                    ->helperText('Opcional: selecciona un usuario específico')
-                    ->disabled()
-                    ->dehydrated(),
+                    ->visible(fn (Get $get) => filled($get('destination_office_id')))
+                    ->helperText('Opcional: selecciona un usuario específico'),
 
                 Textarea::make('indication')
                     ->label('Indicación'),
@@ -197,7 +212,7 @@ class ReceptionDocument extends Page implements HasTable
                     ->columnSpanFull()
                     ->schema([
                         View::make('pages.file-view')
-                            ->viewData(fn($record) => [
+                            ->viewData(fn ($record) => [
                                 'documentId' => $record->id,
                             ])->columnSpanFull(),
                     ]),
@@ -251,12 +266,12 @@ class ReceptionDocument extends Page implements HasTable
                     }
                 });
             })
-            ->visible(function (Document $record): bool {
+            ->disabled(function (Document $record): bool {
                 $latestMovement = $record->latestMovement;
 
-                return $latestMovement
-                    && $latestMovement->status === MovementStatus::RECEIVED
-                    && $latestMovement->destination_office_id === Auth::user()->office_id;
+                return ! $latestMovement
+                    || $latestMovement->status !== MovementStatus::RECEIVED
+                    || $latestMovement->destination_office_id !== Auth::user()->office_id;
             })
             ->successNotificationTitle('Documento derivado correctamente');
     }
@@ -274,7 +289,7 @@ class ReceptionDocument extends Page implements HasTable
             ->form([
                 TextInput::make('document_id')
                     ->label('Caso')
-                    ->default(fn($record) => $record?->case_number)
+                    ->default(fn ($record) => $record?->case_number)
                     ->disabled()
                     ->dehydrated(false),
                 RichEditor::make('observation')
@@ -314,12 +329,12 @@ class ReceptionDocument extends Page implements HasTable
                     ]);
                 });
             })
-            ->visible(function (Document $record): bool {
+            ->disabled(function (Document $record): bool {
                 $latestMovement = $record->latestMovement;
 
-                return $latestMovement
-                    && in_array($latestMovement->status, [MovementStatus::PENDING, MovementStatus::RECEIVED])
-                    && $latestMovement->destination_office_id === Auth::user()->office_id;
+                return ! $latestMovement
+                    || ! in_array($latestMovement->status, [MovementStatus::PENDING, MovementStatus::RECEIVED])
+                    || $latestMovement->destination_office_id !== Auth::user()->office_id;
             })
             ->successNotificationTitle('Documento rechazado correctamente');
     }
