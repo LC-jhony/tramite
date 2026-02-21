@@ -4,16 +4,20 @@ namespace App\Filament\Resources\Documents\Pages;
 
 use App\Filament\Resources\Documents\DocumentResource;
 use App\Models\DocumentFile;
-use App\Models\Movement;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
-
 class CreateDocument extends CreateRecord
 {
     protected static string $resource = DocumentResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
     protected function handleRecordCreation(array $data): \Illuminate\Database\Eloquent\Model
     {
         $files = $data['files'] ?? [];
@@ -22,10 +26,10 @@ class CreateDocument extends CreateRecord
         $document = static::getModel()::create($data);
 
         // Handle file uploads after document is created
-        if (!empty($files) && is_array($files)) {
+        if (! empty($files) && is_array($files)) {
             foreach ($files as $file) {
                 if ($file instanceof TemporaryUploadedFile) {
-                    $filename = Str::uuid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                    $filename = Str::uuid().'_'.time().'.'.$file->getClientOriginalExtension();
                     $path = $file->storeAs('documents', $filename, 'public');
 
                     DocumentFile::create([
@@ -39,6 +43,7 @@ class CreateDocument extends CreateRecord
                 }
             }
         }
+
         return $document;
     }
 }

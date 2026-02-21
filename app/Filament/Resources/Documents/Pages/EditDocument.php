@@ -4,15 +4,12 @@ namespace App\Filament\Resources\Documents\Pages;
 
 use App\Filament\Resources\Documents\DocumentResource;
 use App\Models\DocumentFile;
-use App\Models\Movement;
-use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
-
 
 class EditDocument extends EditRecord
 {
@@ -24,6 +21,12 @@ class EditDocument extends EditRecord
             DeleteAction::make(),
         ];
     }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         $files = $data['files'] ?? [];
@@ -31,10 +34,10 @@ class EditDocument extends EditRecord
 
         $record->update($data);
         // Handle file uploads after document is updated
-        if (!empty($files) && is_array($files)) {
+        if (! empty($files) && is_array($files)) {
             foreach ($files as $file) {
                 if ($file instanceof TemporaryUploadedFile) {
-                    $filename = Str::uuid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                    $filename = Str::uuid().'_'.time().'.'.$file->getClientOriginalExtension();
                     $path = $file->storeAs('documents', $filename, 'public');
 
                     DocumentFile::create([
@@ -48,6 +51,7 @@ class EditDocument extends EditRecord
                 }
             }
         }
+
         return $record;
     }
 }

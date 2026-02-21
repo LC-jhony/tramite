@@ -6,7 +6,7 @@
 - **Laravel:** 12.52
 - **Filament:** v5
 - **Base de datos:** MariaDB
-- **Tests:** 2 básicos (sin cobertura real)
+- **Tests:** 1 básico (sin cobertura real)
 
 ---
 
@@ -14,39 +14,19 @@
 
 ### 1. Tabla `priorities` faltante
 
-El modelo `Document` tiene el campo `priority_id` pero no existe la tabla ni el modelo.
-
-**Tareas:**
-- [ ] Crear migración `create_priorities_table`
-- [ ] Crear modelo `Priority`
-- [ ] Crear factory y seeder
-- [ ] Agregar relación en `Document`
-- [ ] Agregar campo en formularios de Filament
-
-**Campos sugeridos:**
-```php
-Schema::create('priorities', function (Blueprint $table) {
-    $table->id();
-    $table->string('name'); // Alta, Media, Baja
-    $table->string('color')->default('gray');
-    $table->integer('days')->default(5); // Días para respuesta
-    $table->boolean('status')->default(true);
-    $table->timestamps();
-});
-```
+✅ Completado - Tabla, modelo, factory, seeder y relación creados.
 
 ---
 
 ### 2. Policies de autorización
 
-No existen policies. Usuarios pueden ver/editar documentos de otras oficinas.
+Ya existen todas las policies en `app/Policies/`. El paquete `spatie/laravel-permission` está instalado y `filament-shield` también. Verificar que estén correctamente aplicadas en Filament.
 
 **Tareas:**
-- [ ] Crear `DocumentPolicy`
-- [ ] Crear `MovementPolicy`
-- [ ] Crear `OfficePolicy`
-- [ ] Registrar policies en `AppServiceProvider`
-- [ ] Aplicar en recursos de Filament
+- [x] Las policies ya existen: DocumentPolicy, MovementPolicy, OfficePolicy, etc.
+- [x] Paquete `spatie/laravel-permission` instalado
+- [ ] Verificar aplicación en recursos de Filament
+- [ ] Configurar FilamentShield si es necesario
 
 **DocumentPolicy sugerido:**
 ```php
@@ -76,7 +56,7 @@ class DocumentPolicy
 
 ### 3. Tests
 
-Solo existen 2 tests básicos sin cobertura real.
+Solo existe 1 test básico sin cobertura real.
 
 **Tareas:**
 - [ ] Crear `DocumentFactory`
@@ -119,7 +99,7 @@ it('can create a document', function () {
 
 ### 4. Factories incompletos
 
-Solo existen `UserFactory` y `CustomerFactory`.
+Existen `UserFactory`, `CustomerFactory` y `PriorityFactory`.
 
 **Tareas:**
 - [ ] `DocumentFactory`
@@ -128,7 +108,7 @@ Solo existen `UserFactory` y `CustomerFactory`.
 - [ ] `DocumentTypeFactory`
 - [ ] `AdministrationFactory`
 - [ ] `DocumentFileFactory`
-- [ ] `PriorityFactory` (después de crear la tabla)
+- [x] `PriorityFactory`
 
 ---
 
@@ -232,13 +212,14 @@ Agregar tracking de cambios con `owen-it/laravel-auditing`.
 
 ### 9. Ruta pública de seguimiento
 
-Completar `CaseTrackingForm` para que clientes consulten sus casos.
+El componente `CaseTrackingForm` ya existe en `app/Livewire/`. Verificar implementación completa.
 
 **Tareas:**
-- [ ] Implementar formulario de búsqueda por case_number o DNI
-- [ ] Mostrar timeline de movimientos
-- [ ] Mostrar estado actual del documento
-- [ ] Agregar estilos visuales al timeline
+- [x] CaseTrackingForm existe
+- [ ] Verificar formulario de búsqueda por case_number o DNI
+- [ ] Verificar timeline de movimientos
+- [ ] Verificar estado actual del documento
+- [ ] Agregar estilos visuales al timeline si faltan
 
 **Ejemplo de implementación:**
 ```php
@@ -310,7 +291,7 @@ Exportar listados y reportes de gestión.
 
 ### 13. Roles y permisos
 
-Control de acceso granular con `spatie/laravel-permission`.
+El paquete `spatie/laravel-permission` está instalado y `filament-shield` también. Ya existen policies que usan este patrón.
 
 **Roles sugeridos:**
 - `super-admin` - Acceso total
@@ -319,8 +300,10 @@ Control de acceso granular con `spatie/laravel-permission`.
 - `recepcionista` - Solo recepción y derivación
 
 **Tareas:**
-- [ ] Instalar `spatie/laravel-permission`
-- [ ] Crear seeder con roles y permisos
+- [x] Paquete `spatie/laravel-permission` instalado
+- [x] `filament-shield` instalado
+- [ ] Configurar roles y permisos
+- [ ] Crear seeder con roles iniciales
 - [ ] Aplicar middleware en rutas
 - [ ] Filtrar recursos según permisos
 
@@ -370,12 +353,6 @@ Integración con firma electrónica.
 ## Resumen de Comandos
 
 ```bash
-# Crear modelo con todo
-php artisan make:model Priority -mfsc
-
-# Crear policy
-php artisan make:policy DocumentPolicy --model=Document
-
 # Crear test
 php artisan make:test DocumentTest --pest
 
@@ -385,22 +362,25 @@ php artisan make:test DocumentTest --pest
 # Crear migración para índices
 php artisan make:migration add_indexes_to_movements_table
 
-# Instalar paquetes
-composer require spatie/laravel-permission
-composer require owen-it/laravel-auditing
-composer require maatwebsite/excel
-composer require barryvdh/laravel-dompdf
+# Paquetes ya instalados:
+# - spatie/laravel-permission
+# - filament-shield
+
+# Paquetes por instalar si se necesitan:
+# composer require owen-it/laravel-auditing
+# composer require maatwebsite/excel
+# composer require barryvdh/laravel-dompdf
 ```
 
 ---
 
 ## Priorización Sugerida
 
-1. **Primera fase:** 1, 2, 3, 4 (Fundamentos)
-2. **Segunda fase:** 5, 6, 7, 9 (Funcionalidad)
-3. **Tercera fase:** 8, 10, 11, 12 (Integración)
-4. **Cuarta fase:** 13, 14, 15 (Avanzado)
+1. **Primera fase:** 1, 3, 4 (priorities, tests, factories) + verificar 2 y 13
+2. **Segunda fase:** 5, 6, 7, 9 (notificaciones, índices, soft deletes, tracking)
+3. **Tercera fase:** 8, 10, 11, 12 (auditoría, API, dashboard, reportes)
+4. **Cuarta fase:** 14, 15 (archivo automático, firma digital)
 
 ---
 
-*Documento generado: 2026-02-20*
+*Documento actualizado: 2026-02-21*

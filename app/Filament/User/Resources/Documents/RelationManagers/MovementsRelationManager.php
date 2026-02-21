@@ -6,6 +6,9 @@ use App\Enum\MovementAction;
 use App\Enum\MovementStatus;
 use App\Filament\User\Resources\Documents\DocumentResource;
 use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\RestoreAction;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -71,6 +74,12 @@ class MovementsRelationManager extends RelationManager
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->recordActions([
+                DeleteAction::make(),
+                ForceDeleteAction::make(),
+                RestoreAction::make(),
+                // ...
             ])
             ->defaultSort('created_at', 'desc')
             ->headerActions([

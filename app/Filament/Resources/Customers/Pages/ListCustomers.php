@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Customers\Pages;
 use App\Filament\Resources\Customers\CustomerResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Icons\Heroicon;
 
 class ListCustomers extends ListRecords
 {
@@ -13,7 +14,8 @@ class ListCustomers extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+                ->icon(Heroicon::SquaresPlus),
         ];
     }
 }

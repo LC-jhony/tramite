@@ -4,12 +4,12 @@ Essential information for agentic coding agents working in this repository.
 
 ## Project Overview
 
-Laravel 12 document management system ("tramite" = procedure/process) with Filament v5 admin panel. Spanish terminology throughout (tramite, gestion, origen).
+Laravel 12 document management system ("tramite" = procedure/process) with Filament v5 admin panel. Spanish terminology throughout.
 
 ## Tech Stack
 
-- PHP 8.4, Laravel 12, Filament v5, Livewire v4
-- Pest 4 for testing, Tailwind CSS v4, MariaDB, Vite 7
+- PHP 8.4, Laravel 12.52, Filament v5, Livewire v4
+- Pest 4 for testing, Tailwind CSS v4, MariaDB
 
 ## Commands
 
@@ -107,11 +107,9 @@ php artisan make:livewire ComponentName            # Livewire component
 
 ### Key Patterns
 ```php
-// Conditional visibility
 TextInput::make('company_name')
     ->visible(fn (Get $get): bool => $get('type') === 'business'),
 
-// Computed column
 TextColumn::make('full_name')
     ->state(fn (User $record): string => "{$record->first_name} {$record->last_name}"),
 ```
@@ -143,7 +141,6 @@ livewire(CreateUser::class)
 - Import: `@import "tailwindcss"` (not `@tailwind` directives)
 - Config: CSS-first with `@theme` directive, no `tailwind.config.js`
 - Spacing: Use `gap-*` utilities, not margins between items
-- Dark mode: Use `dark:` prefix if existing pages support it
 
 ## Important Rules
 

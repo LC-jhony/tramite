@@ -10,8 +10,13 @@ use App\Models\Office;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\RestoreBulkAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Components\Utilities\Get;
@@ -35,6 +40,15 @@ class DocumentsTable
                     ->label('Numero'),
                 TextColumn::make('case_number')
                     ->label('Caso'),
+                TextColumn::make('priority.name')
+                    ->label('Prioridad')
+                    ->badge()
+                    ->color(fn ($state) => match ($state) {
+                        'Alta' => 'danger',
+                        'Media' => 'warning',
+                        'Baja' => 'success',
+                        default => 'gray',
+                    }),
 
                 TextColumn::make('origen')
                     ->label('Origén')
@@ -84,10 +98,16 @@ class DocumentsTable
             ->recordActions([
                 self::getForwardAction(),
                 EditAction::make(),
+                DeleteAction::make(),
+                ForceDeleteAction::make(),
+                RestoreAction::make(),
+
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
                 ]),
             ]);
     }

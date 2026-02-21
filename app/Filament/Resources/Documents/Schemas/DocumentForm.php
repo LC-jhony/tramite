@@ -7,6 +7,7 @@ use App\Models\Administration;
 use App\Models\Document;
 use App\Models\DocumentType;
 use App\Models\Office;
+use App\Models\Priority;
 use App\Models\User;
 use Asmit\FilamentUpload\Forms\Components\AdvancedFileUpload;
 use Filament\Forms\Components\Checkbox;
@@ -18,7 +19,6 @@ use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class DocumentForm
 {
@@ -55,19 +55,11 @@ class DocumentForm
                                     })
                                     ->disabled()
                                     ->dehydrated(),
-                                // Select::make('priority_id')
-                                //     ->label('Prioridad')
-                                //     ->options(function () {
-                                //         $priorities = DB::table('priorities')->select('id', 'name', 'color_hex')->get();
-                                //         $opts = [];
-                                //         foreach ($priorities as $priority) {
-                                //             $opts[$priority->id] = "<span style='display:grid; grid-template-columns: 1fr auto; align-items:center; width:100%; gap: 8px;'><span>{$priority->name}</span><span style='display:inline-block; width: 20px; height: 20px; background-color:{$priority->color_hex}; border-radius: 20%;'></span></span>";
-                                //         }
-
-                                //         return $opts;
-                                //     })
-                                //     ->allowHtml()
-                                //     ->native(false),
+                                Select::make('priority_id')
+                                    ->label('Prioridad')
+                                    ->options(Priority::where('status', true)->pluck('name', 'id'))
+                                    ->searchable()
+                                    ->native(false),
                                 Select::make('origen')
                                     ->options([
                                         'Interno' => 'Interno',
@@ -93,7 +85,7 @@ class DocumentForm
                                     ->native(false)
                                     ->reactive()
                                     ->afterStateUpdated(function ($state, callable $set) {
-                                        if (!$state) {
+                                        if (! $state) {
                                             $set('response_deadline', null);
 
                                             return;
@@ -163,7 +155,6 @@ class DocumentForm
                                         }
                                     }),
 
-
                             ])->columnSpan(2),
                         Checkbox::make('condition')
                             ->label(
@@ -180,6 +171,7 @@ class DocumentForm
                     ->columnSpanFull(),
             ]);
     }
+
     private static function getNextSequentialNumber(string $field): string
     {
         $year = now()->year;

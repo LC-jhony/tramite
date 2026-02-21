@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Document extends Model
 {
     use SoftDeletes;
+
     protected $fillable = [
         'customer_id',
         'document_number',
@@ -81,5 +82,10 @@ class Document extends Model
     public function latestMovement(): HasOne
     {
         return $this->hasOne(Movement::class)->latestOfMany();
+    }
+
+    public function priority(): BelongsTo
+    {
+        return $this->belongsTo(Priority::class);
     }
 }

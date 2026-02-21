@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             DocumentTypeSeeder::class,
             AdministrationSeeder::class,
             OfficeSeeder::class,
+            PrioritySeeder::class,
         ]);
         User::factory(5)->create();
         Customer::factory(10000)->create();
