@@ -6,9 +6,11 @@ use App\Enum\MovementAction;
 use App\Enum\MovementStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Movement extends Model
 {
+    use SoftDeletes;
     protected $fillable = [
         'document_id',
         'origin_office_id',

@@ -24,6 +24,7 @@ return new class extends Migration
             $table->date('receipt_date');
             $table->string('status');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

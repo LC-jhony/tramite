@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('ruc')->nullable();
             $table->string('company')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -32,6 +32,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_office_destination')->nullable();
             $table->foreign('id_office_destination')->references('id')->on('offices')->onDelete('set null');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
