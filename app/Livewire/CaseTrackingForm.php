@@ -2,8 +2,11 @@
 
 namespace App\Livewire;
 
+use Dom\Text;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
@@ -26,7 +29,18 @@ class CaseTrackingForm extends Component implements HasActions, HasSchemas
     {
         return $schema
             ->components([
-                //
+                Fieldset::make('case_information')
+                    ->label('Case Information')
+                    ->components([
+                        TextInput::make('case_number')
+                            ->label('Case Number')
+                            ->required()
+                            ->placeholder('Enter the case number'),
+                        TextInput::make('dni')
+                            ->label('DNI')
+                            ->required()
+                            ->placeholder('Enter the DNI'),
+                    ]),
             ])
             ->statePath('data');
     }

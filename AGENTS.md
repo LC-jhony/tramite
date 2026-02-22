@@ -127,13 +127,76 @@ TextColumn::make('full_name')
 - Use `assertForbidden`/`assertNotFound` instead of `assertStatus(403)`
 - Browser tests go in `tests/Browser/`
 
-### Filament Testing
+### Authentication
 ```php
-livewire(CreateUser::class)
-    ->fillForm(['name' => 'Test', 'email' => 'test@example.com'])
+beforeEach(function () {
+    actingAs(User::factory()->create());
+});
+```
+
+### Filament Testing Basics
+```php
+// Render
+livewire(ListDocuments::class)->assertSuccessful();
+
+// Fill form
+livewire(CreateDocument::class)
+    ->fillForm(['subject' => 'Test'])
     ->call('create')
     ->assertNotified()
     ->assertRedirect();
+
+// Validation
+->assertHasFormErrors(['subject' => 'required'])
+->assertHasNoFormErrors();
+```
+
+### Testing Tables
+```php
+// Records
+->assertCanSeeTableRecords($documents)
+->assertCanNotSeeTableRecords($documents)
+->assertCountTableRecords(4)
+
+// Search & Sort
+->searchTable('query')
+->searchTableColumns(['title' => 'query'])
+->sortTable('title')
+->sortTable('title', 'desc')
+
+// Filters
+->filterTable('status', 'pending')
+
+// Columns
+->assertCanRenderTableColumn('title')
+->assertTableColumnExists('title')
+->assertTableColumnStateSet('priority.name', 'Alta', record: $document)
+```
+
+### Testing Actions
+```php
+// Call action
+->callAction('derivar')
+
+// Table actions
+->callAction(TestAction::make('send')->table($record))
+->assertActionVisible(TestAction::make('send')->table($record))
+->assertActionExists(TestAction::make('send')->table($record))
+
+// Bulk actions
+->selectTableRecords($records)
+->callAction(TestAction::make('delete')->table()->bulk())
+
+// Actions with data
+->callAction('send', data: ['email' => 'test@test.com'])
+->assertHasNoFormErrors()
+```
+
+### Testing Notifications
+```php
+->assertNotified()
+->assertNotified('Título específico')
+->assertNotNotified()
 ```
 
 ## Tailwind CSS v4

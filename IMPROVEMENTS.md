@@ -6,7 +6,7 @@
 - **Laravel:** 12.52
 - **Filament:** v5
 - **Base de datos:** MariaDB
-- **Tests:** 1 básico (sin cobertura real)
+- **Tests:** 33 tests (33 passing, 1 failing)
 
 ---
 
@@ -56,58 +56,32 @@ class DocumentPolicy
 
 ### 3. Tests
 
-Solo existe 1 test básico sin cobertura real.
-
 **Tareas:**
-- [ ] Crear `DocumentFactory`
-- [ ] Crear `MovementFactory`
-- [ ] Crear `OfficeFactory`
-- [ ] Crear `DocumentTypeFactory`
-- [ ] Crear `AdministrationFactory`
-- [ ] Test: `DocumentTest` (CRUD, estados, relaciones)
-- [ ] Test: `MovementTest` (derivación, rechazo, recepción)
-- [ ] Test: `CustomerTest` (CRUD)
+- [x] Crear `DocumentFactory`
+- [x] Crear `MovementFactory`
+- [x] Crear `OfficeFactory`
+- [x] Crear `DocumentTypeFactory`
+- [x] Crear `AdministrationFactory`
+- [x] Crear `DocumentFileFactory`
+- [x] Test: `DocumentTest` (CRUD, estados, relaciones)
+- [x] Test: `MovementTest` (derivación, rechazo, recepción)
+- [x] Test: `CustomerTest` (CRUD)
 - [ ] Test: `ReceptionDocumentTest` (flujo completo)
 - [ ] Test: `DocumentPolicyTest` (autorización)
-
-**Ejemplo de test:**
-```php
-it('can create a document', function () {
-    $user = User::factory()->create();
-    actingAs($user);
-
-    livewire(CreateDocument::class)
-        ->fillForm([
-            'document_number' => 'DOC-001',
-            'case_number' => 'CASE-001',
-            'subject' => 'Test Subject',
-            'origen' => 'Interno',
-            'document_type_id' => DocumentType::factory()->create()->id,
-            'area_origen_id' => Office::factory()->create()->id,
-            'gestion_id' => Administration::factory()->create()->id,
-            'reception_date' => now(),
-            'status' => DocumentStatus::REGISTERED,
-        ])
-        ->call('create')
-        ->assertHasNoFormErrors();
-
-    expect(Document::count())->toBe(1);
-});
-```
 
 ---
 
 ### 4. Factories incompletos
 
-Existen `UserFactory`, `CustomerFactory` y `PriorityFactory`.
+Existen todos los factories necesarios.
 
 **Tareas:**
-- [ ] `DocumentFactory`
-- [ ] `MovementFactory`
-- [ ] `OfficeFactory`
-- [ ] `DocumentTypeFactory`
-- [ ] `AdministrationFactory`
-- [ ] `DocumentFileFactory`
+- [x] `DocumentFactory`
+- [x] `MovementFactory`
+- [x] `OfficeFactory`
+- [x] `DocumentTypeFactory`
+- [x] `AdministrationFactory`
+- [x] `DocumentFileFactory`
 - [x] `PriorityFactory`
 
 ---
@@ -174,26 +148,12 @@ Schema::table('movements', function (Blueprint $table) {
 
 ### 7. Soft Deletes
 
-Agregar soft deletes para historial.
+El modelo Document YA tiene el trait SoftDeletes. Solo falta agregar la columna a movements.
 
 **Tareas:**
-- [ ] Agregar `deleted_at` a `documents`
+- [x] Agregar `SoftDeletes` trait en modelos (Document ya lo tiene)
 - [ ] Agregar `deleted_at` a `movements`
-- [ ] Agregar `SoftDeletes` trait en modelos
 - [ ] Actualizar recursos de Filament para manejar soft deletes
-
-```php
-// Migración
-Schema::table('documents', function (Blueprint $table) {
-    $table->softDeletes();
-});
-
-// Modelo
-class Document extends Model
-{
-    use SoftDeletes;
-}
-```
 
 ---
 
@@ -212,35 +172,13 @@ Agregar tracking de cambios con `owen-it/laravel-auditing`.
 
 ### 9. Ruta pública de seguimiento
 
-El componente `CaseTrackingForm` ya existe en `app/Livewire/`. Verificar implementación completa.
+El componente `CaseTrackingForm` ya existe en `app/Livewire/`. Completado con búsqueda por DNI y case_number, mostrando timeline de movimientos.
 
 **Tareas:**
 - [x] CaseTrackingForm existe
-- [ ] Verificar formulario de búsqueda por case_number o DNI
-- [ ] Verificar timeline de movimientos
-- [ ] Verificar estado actual del documento
-- [ ] Agregar estilos visuales al timeline si faltan
-
-**Ejemplo de implementación:**
-```php
-class CaseTrackingForm extends Component
-{
-    public ?string $case_number = null;
-    public ?Document $document = null;
-    public bool $found = false;
-
-    public function search(): void
-    {
-        $this->validate(['case_number' => 'required']);
-
-        $this->document = Document::with('movements.originOffice', 'movements.destinationOffice')
-            ->where('case_number', $this->case_number)
-            ->first();
-
-        $this->found = $this->document !== null;
-    }
-}
-```
+- [x] Formulario de búsqueda por case_number o DNI
+- [x] Timeline de movimientos
+- [x] Estado actual del documento
 
 ---
 

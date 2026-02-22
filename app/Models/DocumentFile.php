@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class DocumentFile extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'document_id',
         'filename',
@@ -14,6 +17,7 @@ class DocumentFile extends Model
         'size',
         'uploaded_by',
     ];
+
     public function document()
     {
         return $this->belongsTo(
