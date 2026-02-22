@@ -11,7 +11,11 @@ use App\Models\Office;
 use App\Models\User;
 
 beforeEach(function () {
-    $this->user = User::factory()->create();
+    $office = Office::factory()->create();
+
+    $this->user = User::factory()->create([
+        'office_id' => $office->id,
+    ]);
     $this->actingAs($this->user);
 
     \Gate::before(function () {

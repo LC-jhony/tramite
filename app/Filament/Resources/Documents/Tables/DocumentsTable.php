@@ -23,6 +23,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -35,6 +36,7 @@ class DocumentsTable
             ->paginated([5, 10, 25, 50, 100, 'all'])
             ->defaultPaginationPageOption(5)
             ->searchable()
+            ->modifyQueryUsing(fn (Builder $query) => $query->withTrashed())
             ->columns([
                 TextColumn::make('document_number')
                     ->label('Numero'),
@@ -93,7 +95,7 @@ class DocumentsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                TrashedFilter::make(),
             ])
             ->recordActions([
                 self::getForwardAction(),

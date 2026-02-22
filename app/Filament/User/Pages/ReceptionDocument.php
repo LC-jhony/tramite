@@ -8,6 +8,8 @@ use App\Enum\MovementStatus;
 use App\Models\Document;
 use App\Models\Office;
 use App\Models\User;
+use App\Notifications\DocumentDerivated;
+use App\Notifications\DocumentRejected;
 use Asmit\FilamentUpload\Forms\Components\AdvancedFileUpload;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -126,6 +128,12 @@ class ReceptionDocument extends Page implements HasTable
                         $latestMovement->update([
                             'status' => MovementStatus::RECEIVED,
                         ]);
+                    }
+
+                    // Notificar al propietario del documento
+                    $owner = $record->user;
+                    if ($owner) {
+                        $owner->notify(new \App\Notifications\DocumentReceived($record, Auth::user()->office));
                     }
                 });
             })
@@ -264,6 +272,13 @@ class ReceptionDocument extends Page implements HasTable
                             }
                         }
                     }
+
+                    // Notificar a usuarios de la oficina destino
+                    $destinationOffice = Office::find($data['destination_office_id']);
+                    $destinationUsers = User::where('office_id', $destinationOffice->id)->get();
+                    foreach ($destinationUsers as $user) {
+                        $user->notify(new DocumentDerivated($record, $destinationOffice, $data['indication'] ?? null));
+                    }
                 });
             })
             ->disabled(function (Document $record): bool {
@@ -327,6 +342,12 @@ class ReceptionDocument extends Page implements HasTable
                         'status' => DocumentStatus::REJECTED,
                         'id_office_destination' => $latestMovement->origin_office_id,
                     ]);
+
+                    // Notificar al propietario del documento
+                    $owner = $record->user;
+                    if ($owner) {
+                        $owner->notify(new DocumentRejected($record, Auth::user()->office, strip_tags($data['observation'] ?? null)));
+                    }
                 });
             })
             ->disabled(function (Document $record): bool {

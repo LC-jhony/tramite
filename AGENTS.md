@@ -11,22 +11,15 @@ Laravel 12 document management system ("tramite" = procedure/process) with Filam
 - PHP 8.4, Laravel 12.52, Filament v5, Livewire v4
 - Pest 4 for testing, Tailwind CSS v4, MariaDB
 
+---
+
 ## Commands
 
-### Development
-```bash
-composer run dev          # Full stack (server + queue + logs + vite)
-php artisan serve         # Laravel server only
-npm run dev               # Vite frontend
-npm run build             # Build assets
-```
-
-### Testing (Pest)
+### Running Tests
 ```bash
 php artisan test --compact                           # All tests
 php artisan test --compact tests/Feature/XxxTest.php # Single file
 php artisan test --compact --filter=testName         # Single test by name
-./vendor/bin/pest                                     # Direct Pest
 ```
 
 ### Code Quality
@@ -39,70 +32,74 @@ vendor/bin/pint --test     # Check without fixing
 ```bash
 php artisan migrate              # Run migrations
 php artisan migrate:fresh --seed # Fresh with seeders
-php artisan make:model Name -mfs # Model + migration + factory + seeder
 ```
 
-### Artisan Scaffolding
+### Scaffolding
 ```bash
-php artisan make:test FeatureTest --pest           # Feature test
-php artisan make:test UnitTest --pest --unit       # Unit test
-php artisan make:filament-resource ModelName       # Filament resource
-php artisan make:livewire ComponentName            # Livewire component
+php artisan make:model Name -mfs           # Model + migration + factory + seeder
+php artisan make:test NameTest --pest     # Feature test
+php artisan make:filament-resource ModelName # Filament resource
+php artisan make:livewire ComponentName    # Livewire component
 ```
 
-## Code Style
+---
+
+## Code Style Guidelines
 
 ### PHP Standards
-- 4-space indentation, LF line endings, no trailing whitespace
-- Always use curly braces for control structures
-- Constructor property promotion: `public function __construct(public Service $service) {}`
-- Explicit return types and parameter types required
-- No empty `__construct()` unless private
+- **Indentation:** 4 spaces, LF line endings, no trailing whitespace
+- **Control structures:** Always use curly braces, even for single lines
+- **Constructor property promotion:** Use PHP 8 constructor promotion
+- **Types:** Explicit return types and parameter types required
+- **Empty constructors:** Don't use empty `__construct()` unless private
 
 ### Naming Conventions
-- Models: PascalCase (`User`, `Document`)
-- Methods/variables: camelCase, descriptive (`isRegisteredForDiscounts`)
-- Database: snake_case plural tables, snake_case columns
-- Enums: TitleCase keys (`REGISTERED`, `IN_PROCESS`)
+- **Models/Classes:** PascalCase (`User`, `Document`)
+- **Methods/variables:** camelCase, descriptive (`isRegisteredForDiscounts`)
+- **Database:** snake_case plural tables, snake_case columns
+- **Enums:** TitleCase keys (`REGISTERED`, `IN_PROCESS`)
 
 ### Imports
-- Single-line `use` statements, grouped order: Laravel → third-party → app
+- Single-line `use` statements
+- Grouped order: Laravel → third-party → app
 - Remove unused imports (Pint handles this)
 
 ### Comments
 - Prefer PHPDoc blocks over inline comments
 - Add array shape type definitions when helpful
 
+---
+
 ## Laravel Patterns
 
 ### Models
+- Use `casts()` method, not `$casts` property
 - Eloquent relationships with return type hints
-- Casts in `casts()` method, not `$casts` property
-- Use fillable arrays for mass assignment
+- Fillable arrays for mass assignment
 - Create factories/seeders for all models
 
 ### Controllers & Validation
-- Form Request classes for validation (not inline)
+- Use Form Request classes (not inline validation)
 - Include validation rules AND custom error messages
 - Check sibling Form Requests for array vs string validation rules
-
-### Configuration
-- Use `config('app.name')`, never `env('APP_NAME')` outside config files
 
 ### Database
 - Prefer `Model::query()` over `DB::`
 - Eager load to prevent N+1 problems
 - When modifying columns in migrations, include all previously defined attributes
 
+### Configuration
+- Use `config('app.name')`, never `env('APP_NAME')` outside config files
+
+---
+
 ## Filament Patterns
 
 ### Components
 - Static `make()` methods for initialization
-- Layout: `Filament\Schemas\Components\` (Grid, Section, Fieldset, Tabs)
 - Form fields: `Filament\Forms\Components\` (TextInput, Select)
-- Infolists: `Filament\Infolists\Components\` (TextEntry, IconEntry)
-- Utilities: `Filament\Schemas\Components\Utilities\Get`, `Set`
-- Actions: `Filament\Actions\` (no `Filament\Tables\Actions\`)
+- Layout: `Filament\Schemas\Components\` (Grid, Section, Fieldset)
+- Actions: `Filament\Actions\` (not `Filament\Tables\Actions\`)
 - Icons: `Filament\Support\Icons\Heroicon` enum
 
 ### Key Patterns
@@ -115,8 +112,18 @@ TextColumn::make('full_name')
 ```
 
 ### File Visibility
-- Files are `private` by default in Filament
+- Files are `private` by default
 - Use `->visibility('public')` for public access
+
+---
+
+## Tailwind CSS v4
+
+- Import: `@import "tailwindcss"` (not `@tailwind` directives)
+- Config: CSS-first with `@theme` directive, no `tailwind.config.js`
+- Spacing: Use `gap-*` utilities, not margins between items
+
+---
 
 ## Testing (Pest)
 
@@ -125,7 +132,6 @@ TextColumn::make('full_name')
 - Test happy paths, failure paths, edge cases
 - Use datasets for validation rule tests
 - Use `assertForbidden`/`assertNotFound` instead of `assertStatus(403)`
-- Browser tests go in `tests/Browser/`
 
 ### Authentication
 ```php
@@ -134,7 +140,7 @@ beforeEach(function () {
 });
 ```
 
-### Filament Testing Basics
+### Filament Testing
 ```php
 // Render
 livewire(ListDocuments::class)->assertSuccessful();
@@ -151,59 +157,7 @@ livewire(CreateDocument::class)
 ->assertHasNoFormErrors();
 ```
 
-### Testing Tables
-```php
-// Records
-->assertCanSeeTableRecords($documents)
-->assertCanNotSeeTableRecords($documents)
-->assertCountTableRecords(4)
-
-// Search & Sort
-->searchTable('query')
-->searchTableColumns(['title' => 'query'])
-->sortTable('title')
-->sortTable('title', 'desc')
-
-// Filters
-->filterTable('status', 'pending')
-
-// Columns
-->assertCanRenderTableColumn('title')
-->assertTableColumnExists('title')
-->assertTableColumnStateSet('priority.name', 'Alta', record: $document)
-```
-
-### Testing Actions
-```php
-// Call action
-->callAction('derivar')
-
-// Table actions
-->callAction(TestAction::make('send')->table($record))
-->assertActionVisible(TestAction::make('send')->table($record))
-->assertActionExists(TestAction::make('send')->table($record))
-
-// Bulk actions
-->selectTableRecords($records)
-->callAction(TestAction::make('delete')->table()->bulk())
-
-// Actions with data
-->callAction('send', data: ['email' => 'test@test.com'])
-->assertHasNoFormErrors()
-```
-
-### Testing Notifications
-```php
-->assertNotified()
-->assertNotified('Título específico')
-->assertNotNotified()
-```
-
-## Tailwind CSS v4
-
-- Import: `@import "tailwindcss"` (not `@tailwind` directives)
-- Config: CSS-first with `@theme` directive, no `tailwind.config.js`
-- Spacing: Use `gap-*` utilities, not margins between items
+---
 
 ## Important Rules
 
@@ -214,18 +168,24 @@ livewire(CreateDocument::class)
 - **Always** run `vendor/bin/pint --dirty` before committing
 - **Always** use `--no-interaction` with Artisan commands
 
+---
+
+## File Locations
+
+| Type | Location |
+|------|----------|
+| Models | `app/Models/` |
+| Enums | `app/Enum/` |
+| Filament Resources | `app/Filament/Resources/{ModelName}/` |
+| Livewire | `app/Livewire/` |
+| Factories | `database/factories/` |
+| Tests | `tests/Feature/`, `tests/Unit/`, `tests/Browser/` |
+
+---
+
 ## Laravel 12 Structure
 
 - Middleware configured in `bootstrap/app.php` via `withMiddleware()`
 - `bootstrap/providers.php` for service providers
 - No `app/Http/Kernel.php` or `app/Console/Kernel.php`
 - Console commands in `app/Console/Commands/` auto-registered
-
-## File Locations
-
-- Models: `app/Models/`
-- Enums: `app/Enum/`
-- Filament Resources: `app/Filament/Resources/{ModelName}/`
-- Livewire: `app/Livewire/`
-- Factories: `database/factories/`
-- Tests: `tests/Feature/`, `tests/Unit/`, `tests/Browser/`

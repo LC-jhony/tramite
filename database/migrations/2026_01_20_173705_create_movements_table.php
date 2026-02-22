@@ -23,6 +23,12 @@ return new class extends Migration
             $table->text('observation')->nullable();
             $table->date('receipt_date');
             $table->string('status');
+            $table->index('document_id');
+            $table->index('origin_office_id');
+            $table->index('destination_office_id');
+            $table->index('status');
+            $table->index('receipt_date');
+            $table->index(['destination_office_id', 'status']);
             $table->timestamps();
             $table->softDeletes();
         });

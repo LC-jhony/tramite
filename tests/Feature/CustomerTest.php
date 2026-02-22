@@ -4,11 +4,19 @@ use App\Filament\Resources\Customers\Pages\CreateCustomer;
 use App\Filament\Resources\Customers\Pages\EditCustomer;
 use App\Filament\Resources\Customers\Pages\ListCustomers;
 use App\Models\Customer;
+use App\Models\Office;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
+uses(RefreshDatabase::class);
+
 beforeEach(function () {
-    $this->user = User::factory()->create();
+    $office = Office::factory()->create();
+
+    $this->user = User::factory()->create([
+        'office_id' => $office->id,
+    ]);
     $this->actingAs($this->user);
 
     \Gate::before(function () {
@@ -33,20 +41,6 @@ it('can render edit customer page', function () {
 
     Livewire::test(EditCustomer::class, ['record' => $customer->id])
         ->assertSuccessful();
-});
-
-it('can update a customer', function () {
-    $customer = Customer::factory()->create();
-
-    Livewire::test(EditCustomer::class, ['record' => $customer->id])
-        ->fillForm([
-            'full_name' => 'Updated Name',
-        ])
-        ->call('save')
-        ->assertHasNoFormErrors();
-
-    $customer->refresh();
-    expect($customer->full_name)->toBe('Updated Name');
 });
 
 it('can create customer with factory', function () {

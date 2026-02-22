@@ -17,6 +17,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Tapp\FilamentAuditing\RelationManagers\AuditsRelationManager;
 
 class DocumentResource extends Resource
 {
@@ -45,6 +46,7 @@ class DocumentResource extends Resource
     {
         return [
             MovementsRelationManager::class,
+            AuditsRelationManager::class,
         ];
     }
 

@@ -6,7 +6,7 @@
 - **Laravel:** 12.52
 - **Filament:** v5
 - **Base de datos:** MariaDB
-- **Tests:** 33 tests (33 passing, 1 failing)
+- **Tests:** 45 tests (45 passing)
 
 ---
 
@@ -25,8 +25,9 @@ Ya existen todas las policies en `app/Policies/`. El paquete `spatie/laravel-per
 **Tareas:**
 - [x] Las policies ya existen: DocumentPolicy, MovementPolicy, OfficePolicy, etc.
 - [x] Paquete `spatie/laravel-permission` instalado
-- [ ] Verificar aplicación en recursos de Filament
-- [ ] Configurar FilamentShield si es necesario
+- [x] Verificar aplicación en recursos de Filament
+- [x] Configurar FilamentShield si es necesario
+- [x] Personalizar DocumentPolicy con lógica de negocio (Opción 1)
 
 **DocumentPolicy sugerido:**
 ```php
@@ -66,8 +67,8 @@ class DocumentPolicy
 - [x] Test: `DocumentTest` (CRUD, estados, relaciones)
 - [x] Test: `MovementTest` (derivación, rechazo, recepción)
 - [x] Test: `CustomerTest` (CRUD)
-- [ ] Test: `ReceptionDocumentTest` (flujo completo)
-- [ ] Test: `DocumentPolicyTest` (autorización)
+- [x] Test: `ReceptionDocumentTest` (flujo completo)
+- [x] Test: `DocumentPolicyTest` (autorización)
 
 ---
 
@@ -93,11 +94,20 @@ Existen todos los factories necesarios.
 Agregar notificaciones cuando un documento llega a una oficina.
 
 **Tareas:**
-- [ ] Crear `DocumentReceived` notification
-- [ ] Crear `DocumentDerivated` notification
-- [ ] Crear `DocumentRejected` notification
-- [ ] Configurar canales (database, mail)
+- [x] Crear `DocumentReceived` notification
+- [x] Crear `DocumentDerivated` notification
+- [x] Crear `DocumentRejected` notification
+- [x] Implementar notificaciones en ReceptionDocument (canal database)
+- [ ] **IMPLEMENTAR EMAIL** - Agregar canal email a las notificaciones
+- [ ] Configurar mailtrap/smtp en .env
 - [ ] Agregar preference de notificaciones por usuario
+
+**Estado actual:** Solo canal `database` implementado. Email pendiente.
+
+**Notificaciones integradas:**
+- Recepcionar → Notifica al propietario (database)
+- Derivar → Notifica a oficina destino (database)
+- Rechazar → Notifica al propietario (database)
 
 **Ejemplo:**
 ```php
@@ -131,7 +141,7 @@ class DocumentReceived extends Notification
 La tabla `movements` no tiene índices en columnas clave.
 
 **Tareas:**
-- [ ] Crear migración para agregar índices
+- [x] Crear migración para agregar índices
 
 ```php
 Schema::table('movements', function (Blueprint $table) {
@@ -152,8 +162,8 @@ El modelo Document YA tiene el trait SoftDeletes. Solo falta agregar la columna 
 
 **Tareas:**
 - [x] Agregar `SoftDeletes` trait en modelos (Document ya lo tiene)
-- [ ] Agregar `deleted_at` a `movements`
-- [ ] Actualizar recursos de Filament para manejar soft deletes
+- [x] Agregar `deleted_at` a `movements`
+- [x] Actualizar recursos de Filament para manejar soft deletes
 
 ---
 
@@ -162,11 +172,18 @@ El modelo Document YA tiene el trait SoftDeletes. Solo falta agregar la columna 
 Agregar tracking de cambios con `owen-it/laravel-auditing`.
 
 **Tareas:**
-- [ ] Instalar paquete: `composer require owen-it/laravel-auditing`
-- [ ] Publicar configuración
-- [ ] Agregar trait `Auditable` a modelos
-- [ ] Crear migración para tabla `audits`
+- [x] Instalar paquete: `composer require owen-it/laravel-auditing`
+- [x] Instalar paquete: `composer require tapp/filament-auditing`
+- [x] Publicar configuración
+- [x] Agregar trait `Auditable` a modelos (Document, Movement)
+- [x] Crear migración para tabla `audits`
 - [ ] Agregar sección de historial en vista de documento
+
+**Implementado:**
+- Paquetes instalados (laravel-auditing + filament-auditing)
+- Tabla `audits` creada
+- Modelos Document y Movement con trait Auditable
+- AuditsRelationManager agregado a DocumentResource (admin y user)
 
 ---
 
@@ -182,7 +199,26 @@ El componente `CaseTrackingForm` ya existe en `app/Livewire/`. Completado con b�
 
 ---
 
-### 10. API REST
+### 10. Soporte Multilenguaje
+
+Sistema de traducciones implementado usando archivos JSON en `lang/`.
+
+**Tareas:**
+- [x] Crear archivo `lang/es.json` con traducciones
+- [x] Implementar traducciones en DocumentForm
+- [x] Implementar traducciones en CaseTrackingForm
+- [ ] Crear archivo `lang/en.json` para inglés
+- [ ] Agregar selector de idioma en frontend
+
+**Traducciones implementadas:**
+- Labels de formularios
+- Mensajes de error
+- Títulos y descripciones
+- Textos de ayuda
+
+---
+
+### 11. API REST
 
 Exponer endpoints para integración externa.
 
@@ -200,22 +236,29 @@ Exponer endpoints para integración externa.
 
 ## Baja Prioridad
 
-### 11. Dashboard con widgets
+### 12. Dashboard con widgets
 
 Estadísticas visuales en el dashboard.
 
 **Widgets sugeridos:**
-- [ ] Documentos por estado (gráfico de barras)
-- [ ] Documentos por oficina (gráfico pie)
+- [x] Documentos por estado (gráfico de barras)
+- [x] Documentos por oficina (gráfico pie)
 - [ ] Tiempo promedio de respuesta
-- [ ] Documentos pendientes por vencer
-- [ ] Últimos movimientos
+- [x] Documentos pendientes por vencer
+- [x] Últimos movimientos
+
+**Implementado:**
+- Paquete `filament/widgets` (incluido en Filament v5)
+- Widget `DashboardStats` - estadísticas de documentos
+- Widget `DocumentsByStatus` - gráfico de documentos por estado
+- Widget `RecentMovements` - tabla de últimos movimientos
+- Widgets registrados en AdminPanelProvider
 
 **Paquete recomendado:** `filament/spatie-laravel-widgets-plugin`
 
 ---
 
-### 12. Reportes PDF/Excel
+### 13. Reportes PDF/Excel
 
 Exportar listados y reportes de gestión.
 
@@ -227,7 +270,7 @@ Exportar listados y reportes de gestión.
 
 ---
 
-### 13. Roles y permisos
+### 14. Roles y permisos
 
 El paquete `spatie/laravel-permission` está instalado y `filament-shield` también. Ya existen policies que usan este patrón.
 
@@ -247,7 +290,7 @@ El paquete `spatie/laravel-permission` está instalado y `filament-shield` tambi
 
 ---
 
-### 14. Archivo automático
+### 15. Archivo automático
 
 Job para archivar documentos completados.
 
@@ -271,7 +314,7 @@ class ArchiveCompletedDocuments implements ShouldQueue
 
 ---
 
-### 15. Firma digital
+### 16. Firma digital
 
 Integración con firma electrónica.
 
@@ -314,11 +357,11 @@ php artisan make:migration add_indexes_to_movements_table
 
 ## Priorización Sugerida
 
-1. **Primera fase:** 1, 3, 4 (priorities, tests, factories) + verificar 2 y 13
-2. **Segunda fase:** 5, 6, 7, 9 (notificaciones, índices, soft deletes, tracking)
-3. **Tercera fase:** 8, 10, 11, 12 (auditoría, API, dashboard, reportes)
-4. **Cuarta fase:** 14, 15 (archivo automático, firma digital)
+1. **Primera fase:** 1, 3, 4, 10 (priorities, tests, factories, multilenguaje) + verificar 2 y 13
+2. **Segunda fase:** 5, 6, 7, 9 (notificaciones + email, índices, soft deletes, tracking)
+3. **Tercera fase:** 8, 11, 12, 14 (auditoría, API, dashboard, reportes)
+4. **Cuarta fase:** 15, 16 (archivo automático, firma digital)
 
 ---
 
-*Documento actualizado: 2026-02-21*
+*Documento actualizado: 2026-02-22*

@@ -31,6 +31,7 @@ class DocumentsTable
             ->paginated([5, 10, 25, 50, 100, 'all'])
             ->defaultPaginationPageOption(5)
             ->searchable()
+            ->modifyQueryUsing(fn (Builder $query) => $query->withTrashed())
             ->columns([
                 TextColumn::make('document_number')
                     ->label('Numero'),
@@ -80,7 +81,7 @@ class DocumentsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                TrashedFilter::make(),
             ])
             ->recordActions([
                 self::getForwardAction(),
