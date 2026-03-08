@@ -52,6 +52,7 @@ class DocumentResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where('current_office_id', auth()->user()->office_id);
+            // ->where('user_id', auth()->id())
+            ->where('current_office_id', auth()->user()?->office_id);
     }
 }

@@ -3,16 +3,18 @@
 namespace App\Filament\User\Pages;
 
 use App\Models\Document;
-use Filament\Actions\Action;
+use App\Trait\HasForwardAction;
+use Filament\Actions\ViewAction;
 use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class DocumentReception extends Page implements HasTable
 {
-    use InteractsWithTable;
+    use HasForwardAction, InteractsWithTable;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-inbox-arrow-down';
 
@@ -22,8 +24,17 @@ class DocumentReception extends Page implements HasTable
 
     public function table(Table $table): Table
     {
+        $officeId = Auth::user()?->office_id;
+
         return $table
-            ->query(Document::query()->where('status', 'pendiente')) // Solo documentos pendientes de recibir
+            ->query(
+                Document::query()
+                    ->with(['latestMovement', 'latestMovement.toOffice', 'latestMovement.fromOffice'])
+                    ->whereHas('movements', function ($query) use ($officeId) {
+                        $query->where('to_office_id', $officeId)
+                            ->where('action', 'derivado');
+                    })
+            )
             ->columns([
                 TextColumn::make('document_number')
                     ->label('Nro. Trámite')
@@ -37,18 +48,17 @@ class DocumentReception extends Page implements HasTable
                 TextColumn::make('subject')
                     ->label('Asunto')
                     ->limit(50),
+                TextColumn::make('latestMovement.toOffice.name')
+                    ->label('Derivado a')
+                    ->searchable(),
                 TextColumn::make('reception_date')
                     ->label('Fecha Registro')
                     ->date()
                     ->sortable(),
             ])
             ->actions([
-                Action::make('receive')
-                    ->label('Recibir')
-                    ->icon('heroicon-m-check-circle')
-                    ->color('success')
-                    ->requiresConfirmation()
-                    ->action(fn (Document $record) => $record->update(['status' => 'recibido'])),
+                self::getForwardAction(),
+                ViewAction::make(),
             ]);
     }
 }

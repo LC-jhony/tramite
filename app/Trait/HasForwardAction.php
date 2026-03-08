@@ -10,6 +10,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 trait HasForwardAction
 {
@@ -23,9 +24,9 @@ trait HasForwardAction
             ->modalDescription('El documento será enviado a la oficina seleccionada.')
             ->modalSubmitActionLabel('Confirmar Derivación')
             ->form(self::getForwardFormSchema())
-            ->visible(fn(Document $record): bool => $record->status === DocumentStatus::Registrado->value)
-            ->action(fn(Document $record, array $data) => self::forwardAction($record, $data))
-            ->successNotificationTitle('Documento derivado corectamente');
+            ->disabled(fn (Document $record): bool => $record->wasDerivedBy(auth()->id()))
+            ->action(fn (Document $record, array $data) => self::forwardAction($record, $data))
+            ->successNotificationTitle('Documento derivado correctamente');
     }
 
     public static function getForwardFormSchema(): array
@@ -34,7 +35,7 @@ trait HasForwardAction
             Select::make('from_office_id')
                 ->label('Oficina de Origen')
                 ->options(self::getActiveOffices())
-                ->default(fn() => Auth::user()?->office_id)
+                ->default(fn () => Auth::user()?->office_id)
                 ->disabled()
                 ->dehydrated()
                 ->required(),
@@ -59,20 +60,38 @@ trait HasForwardAction
 
     public static function forwardAction(Document $record, array $data): void
     {
-        \Illuminate\Support\Facades\DB::transaction(function () use ($record, $data) {
-            self::completeLastMovement($record);
-
+        DB::transaction(function () use ($record, $data) {
             $record->movements()->create([
                 'from_office_id' => $data['from_office_id'],
                 'to_office_id' => $data['to_office_id'],
+                'receipt_date' => now()->toDateString(),
                 'action' => MovementAction::Derivado->value,
                 'user_id' => Auth::id(),
             ]);
 
-            // $paths = self::getUploadedPathsStatic($data, 'document_files');
-            // if (! empty($paths)) {
-            //     self::syncFilesStatic($record, $paths);
-            // }
+            $record->update([
+                // 'current_office_id' => $data['to_office_id'],
+                'status' => DocumentStatus::EnProceso->value,
+            ]);
         });
+    }
+
+    public static function canDerive(Document $record): bool
+    {
+        if ($record->isClosed()) {
+            return false;
+        }
+
+        $latestMovement = $record->latestMovement;
+
+        if (! $latestMovement) {
+            return true;
+        }
+
+        if ($latestMovement->user_id === Auth::id()) {
+            return false;
+        }
+
+        return $latestMovement->to_office_id === Auth::user()?->office_id;
     }
 }
