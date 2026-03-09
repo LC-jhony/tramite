@@ -134,4 +134,11 @@ class Document extends Model
     {
         return $this->receptions()->exists();
     }
+
+    public function hasActionByCurrentUser(): bool
+    {
+        return $this->movements()
+            ->where('user_id', auth()->id())
+            ->exists();
+    }
 }

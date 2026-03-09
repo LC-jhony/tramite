@@ -11,6 +11,7 @@ use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\HtmlString;
 
 trait HasRejectAction
 {
@@ -26,12 +27,13 @@ trait HasRejectAction
             ->label('Otro')
             ->color('danger')
             ->icon(Heroicon::XCircle)
-            ->visible(
-                fn (Document $record): bool => $record->wasReceived() && ! $record->isClosed()
-            )
+            // ->visible(
+            //     fn(Document $record): bool => $record->wasReceived() && ! $record->isClosed()
+            // )
             ->disabled(
-                fn (Document $record): bool => ! $record->wasReceived()
+                fn(Document $record): bool => ! $record->wasReceived()
                     || $record->isClosed()
+                    || $record->hasActionByCurrentUser()
             )
             ->form(self::getRejectFormSchema())
             ->action(function (Document $record, array $data) {
@@ -52,7 +54,9 @@ trait HasRejectAction
                     'cancelado' => 'cancelado',
                 ])
                 ->required()
-                ->native(false),
+                ->native(false)
+                ->helperText(new HtmlString('selecione la <strong class="text-primary-600 font-semibold">Acción del Documento</strong> para realizar el tramite '))
+                ->hint(new HtmlString('<span class="text-rose-500 text-sm">Selecione la Acción del Tramite que realizara</span>')),
             Textarea::make('observation')
                 ->label('Motivo de Rechazo')
                 ->required()

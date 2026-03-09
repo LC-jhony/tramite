@@ -27,6 +27,7 @@ class UserPanelProvider extends PanelProvider
             ->brandName(fn () => auth()->user()?->office?->name ?? config('app.name'))
             ->id('user')
             ->path('user')
+            ->topNavigation()
             ->viteTheme('resources/css/filament/user/theme.css')
             ->login()
             ->colors([

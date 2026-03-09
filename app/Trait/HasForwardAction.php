@@ -3,7 +3,6 @@
 namespace App\Trait;
 
 use App\Enum\DocumentStatus;
-use App\Enum\MovementAction;
 use App\Models\Document;
 use App\Models\Office;
 use Filament\Actions\Action;
@@ -12,6 +11,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\HtmlString;
 
 trait HasForwardAction
 {
@@ -25,11 +25,14 @@ trait HasForwardAction
             ->modalDescription('El documento será enviado a la oficina seleccionada.')
             ->modalSubmitActionLabel('Confirmar Derivación')
             ->form(self::getForwardFormSchema())
-            ->visible(
-                fn (Document $record): bool => $record->wasReceived() && ! $record->isClosed()
+            // ->visible(
+            //     fn(Document $record): bool => $record->wasReceived() && ! $record->isClosed()
+            // )
+            ->disabled(
+                fn(Document $record): bool => $record->wasDerivedBy(auth()->id()) ||
+                    $record->hasActionByCurrentUser()
             )
-            ->disabled(fn (Document $record): bool => $record->wasDerivedBy(auth()->id()))
-            ->action(fn (Document $record, array $data) => self::forwardAction($record, $data))
+            ->action(fn(Document $record, array $data) => self::forwardAction($record, $data))
             ->successNotificationTitle('Documento derivado correctamente');
     }
 
@@ -39,7 +42,7 @@ trait HasForwardAction
             Select::make('from_office_id')
                 ->label('Oficina de Origen')
                 ->options(self::getActiveOffices())
-                ->default(fn () => Auth::user()?->office_id)
+                ->default(fn() => Auth::user()?->office_id)
                 ->disabled()
                 ->dehydrated()
                 ->required(),
@@ -49,6 +52,16 @@ trait HasForwardAction
                 ->required()
                 ->searchable()
                 ->placeholder('Selecciona la oficina destino'),
+            Select::make('action')
+                ->label('Acción')
+                ->options([
+                    'derivado' => 'Derivar',
+                    'respondido' => 'Responder',
+                ])
+                ->required()
+                ->native(false)
+                ->helperText(new HtmlString('selecione la <strong class="text-primary-600 font-semibold">Acción del Documento</strong> para realizar el tramite '))
+                ->hint(new HtmlString('<span class="text-rose-500 text-sm">Selecione la Acción del Tramite que realizara</span>')),
             Textarea::make('observation')
                 ->label('Observación')
                 ->placeholder('Motivo de la derivación (opcional)')
@@ -65,18 +78,21 @@ trait HasForwardAction
     public static function forwardAction(Document $record, array $data): void
     {
         DB::transaction(function () use ($record, $data) {
+            $selectedAction = $data['action'];
             $record->movements()->create([
                 'from_office_id' => $data['from_office_id'],
                 'to_office_id' => $data['to_office_id'],
                 'receipt_date' => now()->toDateString(),
-                'action' => MovementAction::Derivado->value,
+                'action' => $selectedAction,
                 'user_id' => Auth::id(),
             ]);
 
-            $record->update([
-                // 'current_office_id' => $data['to_office_id'],
-                'status' => DocumentStatus::EnProceso->value,
-            ]);
+            $status = match ($selectedAction) {
+                'derivado' => DocumentStatus::EnProceso,
+                'respondido' => DocumentStatus::Respondido,
+            };
+
+            $record->update(['status' => $status->value]);
         });
     }
 

@@ -71,11 +71,82 @@ Modificaciones:
 })
 ```
 
+### 6. Página: `app/Filament/User/Pages/DocumentReception.php`
+
+Modificado para pasar `$this` al método `getReceiveAction()`:
+```php
+self::getReceiveAction($this),
+```
+
+### 7. Enum: `app/Enum/DocumentStatus.php`
+
+Agregado nuevo status `Respondido`:
+```php
+case Respondido = 'respondido';
+```
+- Color: `primary`
+- Icono: `heroicon-o-chat-bubble-left-right`
+- Transiciones permitidas desde `Respondido`: `Finalizado`, `Rechazado`, `Cancelado`
+
+### 8. Trait: `app/Trait/HasForwardAction.php`
+
+Modificado el método `forwardAction()` para actualizar el status según la acción seleccionada:
+```php
+$status = match ($selectedAction) {
+    'derivado' => DocumentStatus::EnProceso,
+    'respondido' => DocumentStatus::Respondido,
+};
+```
+
+También se agregaron estilos Tailwind CSS al helperText y hint del Select de acción.
+
+### 9. Trait: `app/Trait/HasReceiveAction.php`
+
+Actualizado para usar el nuevo método `hasActionByCurrentUser()` para deshabilitar acciones.
+
+### 10. Trait: `app/Trait/HasRejectAction.php`
+
+Actualizado para usar el nuevo método `hasActionByCurrentUser()` para deshabilitar acciones.
+
 ### 5. Página: `app/Filament/User/Pages/DocumentReception.php`
 
 Modificado para pasar `$this` al método `getReceiveAction()`:
 ```php
 self::getReceiveAction($this),
+```
+
+### 8. Modelo: `app/Models/Document.php`
+
+Agregado nuevo método:
+```php
+public function hasActionByCurrentUser(): bool
+{
+    return $this->movements()
+        ->where('user_id', auth()->id())
+        ->exists();
+}
+```
+
+### 9. Trait: `app/Trait/HasForwardAction.php`
+
+Actualizado `disabled` para verificar si el usuario ya realizó alguna acción:
+```php
+->disabled(fn (Document $record): bool => 
+    $record->wasDerivedBy(auth()->id()) || 
+    $record->hasActionByCurrentUser()
+)
+```
+
+### 10. Trait: `app/Trait/HasRejectAction.php`
+
+Actualizado `disabled` para verificar si el usuario ya realizó alguna acción:
+```php
+->disabled(
+    fn (Document $record): bool => 
+        ! $record->wasReceived() 
+        || $record->isClosed()
+        || $record->hasActionByCurrentUser()
+)
 ```
 
 ## Flujo de Uso
@@ -86,11 +157,21 @@ self::getReceiveAction($this),
 4. La tabla se refresca automáticamente
 5. El botón "Recibir" se oculta (porque `wasReceived()` ahora retorna `true`)
 6. Los botones "Responder" y "Otro" se muestran
+7. Al derivar o responder un documento:
+   - Si selecciona "Derivar" → status cambia a `EnProceso`
+   - Si selecciona "Responder" → status cambia a `Respondido`
+8. **Deshabilitación de acciones**:
+   - Si el usuario hace clic en "Responder" → ambas acciones (Responder y Otro) se deshabilitan para ese usuario
+   - Si el usuario hace clic en "Otro" → ambas acciones (Responder y Otro) se deshabilitan para ese usuario
+   - Otro usuario podría ejecutar las acciones si el documento aún no está cerrado
 
 ## Archivos Modificados/Creados
 
-- `database/migrations/xxxx_xx_xx_create_document_receptions_table.php` (nuevo)
+- `database/migrations/2026_03_08_235830_create_document_receptions_table.php` (nuevo)
 - `app/Models/DocumentReception.php` (nuevo)
 - `app/Models/Document.php` (modificado)
+- `app/Enum/DocumentStatus.php` (modificado)
 - `app/Trait/HasReceiveAction.php` (modificado)
+- `app/Trait/HasForwardAction.php` (modificado)
+- `app/Trait/HasRejectAction.php` (modificado)
 - `app/Filament/User/Pages/DocumentReception.php` (modificado)
