@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('movement_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('office_id')->constrained()->onDelete('cascade');
+            $table->string('movement_Action');
             $table->date('reception_date');
             $table->timestamps();
         });

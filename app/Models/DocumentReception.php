@@ -16,6 +16,7 @@ class DocumentReception extends Model
         'user_id',
         'office_id',
         'reception_date',
+        'movement_Action',
     ];
 
     public function document(): \Illuminate\Database\Eloquent\Relations\BelongsTo

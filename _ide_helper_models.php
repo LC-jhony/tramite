@@ -132,8 +132,40 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereUserId($value)
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\DocumentReception> $receptions
+ * @property-read int|null $receptions_count
  */
 	class Document extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property int $document_id
+ * @property int $movement_id
+ * @property int $user_id
+ * @property int $office_id
+ * @property string $reception_date
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Document $document
+ * @property-read \App\Models\Movement $movement
+ * @property-read \App\Models\Office $office
+ * @property-read \App\Models\User $user
+ * @method static \Database\Factories\DocumentReceptionFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentReception newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentReception newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentReception query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentReception whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentReception whereDocumentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentReception whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentReception whereMovementId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentReception whereOfficeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentReception whereReceptionDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentReception whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentReception whereUserId($value)
+ */
+	class DocumentReception extends \Eloquent {}
 }
 
 namespace App\Models{
