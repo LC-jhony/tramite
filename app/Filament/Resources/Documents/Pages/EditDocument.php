@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\User\Resources\Documents\Pages;
+namespace App\Filament\Resources\Documents\Pages;
 
-use App\Filament\User\Resources\Documents\DocumentResource;
+use App\Filament\Resources\Documents\DocumentResource;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
@@ -15,9 +15,5 @@ class EditDocument extends EditRecord
         return [
             DeleteAction::make(),
         ];
-    }
-    protected function getRedirectUrl(): string
-    {
-        return $this->getResource()::getUrl('index');
     }
 }

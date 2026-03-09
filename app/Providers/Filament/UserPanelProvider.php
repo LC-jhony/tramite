@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Livewire\CustomTopNavigation;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -24,14 +25,15 @@ class UserPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->brandName(fn () => auth()->user()?->office?->name ?? config('app.name'))
+            ->brandName(fn() => auth()->user()?->office?->name ?? config('app.name'))
             ->id('user')
             ->path('user')
+            //   ->topbarLivewireComponent(CustomTopNavigation::class)
             ->topNavigation()
             ->viteTheme('resources/css/filament/user/theme.css')
             ->login()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::hex('#008255'),
             ])
             ->discoverResources(in: app_path('Filament/User/Resources'), for: 'App\Filament\User\Resources')
             ->discoverPages(in: app_path('Filament/User/Pages'), for: 'App\Filament\User\Pages')

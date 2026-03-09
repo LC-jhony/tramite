@@ -1,10 +1,9 @@
-@import 'tailwindcss';
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 
-@source '../../../../app/Filament/User/**/*';
-@source '../../../../resources/views/filament/user/**/*';
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
 
-.fi-topbar>nav {
+.fi-topbar {
     @apply !bg-inherit ring-0 shadow-none;
 }
 
