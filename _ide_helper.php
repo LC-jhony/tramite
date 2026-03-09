@@ -23451,6 +23451,14 @@ namespace AnourValar\EloquentSerialize\Facades {
             }
     }
 
+namespace Hugomyb\FilamentMediaAction\Facades {
+    /**
+     * @see \Hugomyb\FilamentMediaAction\FilamentMediaAction
+     */
+    class FilamentMediaAction {
+            }
+    }
+
 namespace Livewire {
     /**
      * @see \Livewire\LivewireManager
@@ -32597,6 +32605,7 @@ namespace  {
     class View extends \Illuminate\Support\Facades\View {}
     class Vite extends \Illuminate\Support\Facades\Vite {}
     class EloquentSerialize extends \AnourValar\EloquentSerialize\Facades\EloquentSerializeFacade {}
+    class FilamentMediaAction extends \Hugomyb\FilamentMediaAction\Facades\FilamentMediaAction {}
     class Livewire extends \Livewire\Livewire {}
 }
 

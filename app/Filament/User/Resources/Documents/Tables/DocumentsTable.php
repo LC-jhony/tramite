@@ -105,7 +105,8 @@ class DocumentsTable
                     }),
             ])
             ->recordActions([
-                self::getForwardAction(),
+                self::getForwardAction()
+                    ->label('derivar'),
                 EditAction::make(),
             ])
             ->bulkActions([

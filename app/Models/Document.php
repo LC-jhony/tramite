@@ -112,6 +112,11 @@ class Document extends Model
         return $this->hasOne(Movement::class)->latestOfMany();
     }
 
+    public function receptions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(DocumentReception::class);
+    }
+
     public function isClosed(): bool
     {
         return in_array($this->status, ['finalizado', 'cancelado', 'rechazado']);
@@ -123,5 +128,10 @@ class Document extends Model
             ->where('user_id', $userId)
             ->where('action', 'derivado')
             ->exists();
+    }
+
+    public function wasReceived(): bool
+    {
+        return $this->receptions()->exists();
     }
 }

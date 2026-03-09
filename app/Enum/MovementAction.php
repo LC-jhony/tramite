@@ -12,7 +12,6 @@ enum MovementAction: string implements HasColor, HasIcon, HasLabel
     case Recibido = 'recibido';
     case Respondido = 'respondido';
     case Rechazado = 'rechazado';
-    case Otro = 'otro';
     case Finalizado = 'finalizado';
     case Cancelado = 'cancelado';
 
@@ -23,7 +22,6 @@ enum MovementAction: string implements HasColor, HasIcon, HasLabel
             self::Recibido => 'Recibido',
             self::Respondido => 'Respondido',
             self::Rechazado => 'Rechazado',
-            self::Otro => 'Otros',
             self::Finalizado => 'Finalizado',
             self::Cancelado => 'Cancelado',
         };
@@ -36,7 +34,6 @@ enum MovementAction: string implements HasColor, HasIcon, HasLabel
             self::Recibido => 'primary',
             self::Respondido => 'success',
             self::Rechazado => 'danger',
-            self::Otro => 'warning',
             self::Finalizado => 'success',
             self::Cancelado => 'gray',
         };
@@ -49,7 +46,6 @@ enum MovementAction: string implements HasColor, HasIcon, HasLabel
             self::Recibido => 'heroicon-o-inbox-arrow-down',
             self::Respondido => 'heroicon-o-chat-bubble-left-right',
             self::Rechazado => 'heroicon-o-no-symbol',
-            self::Otro => 'heroicon-o-ellipsis-horizontal-circle',
             self::Finalizado => 'heroicon-o-check-badge',
             self::Cancelado => 'heroicon-o-x-circle',
         };

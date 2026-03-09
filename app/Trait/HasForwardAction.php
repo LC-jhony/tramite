@@ -9,6 +9,7 @@ use App\Models\Office;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -17,13 +18,16 @@ trait HasForwardAction
     public static function getForwardAction(): Action
     {
         return Action::make('forward')
-            ->label('Derivar')
+            // ->label('Derivar')
             ->color('success')
-            ->icon('heroicon-o-paper-airplane')
+            ->icon(Heroicon::RocketLaunch)
             ->modalHeading('Derivar Documento')
             ->modalDescription('El documento será enviado a la oficina seleccionada.')
             ->modalSubmitActionLabel('Confirmar Derivación')
             ->form(self::getForwardFormSchema())
+            ->visible(
+                fn (Document $record): bool => $record->wasReceived() && ! $record->isClosed()
+            )
             ->disabled(fn (Document $record): bool => $record->wasDerivedBy(auth()->id()))
             ->action(fn (Document $record, array $data) => self::forwardAction($record, $data))
             ->successNotificationTitle('Documento derivado correctamente');
