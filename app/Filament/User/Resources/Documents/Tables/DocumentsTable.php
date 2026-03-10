@@ -113,6 +113,8 @@ class DocumentsTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->paginationPageOptions([5])
+            ->striped();
     }
 }

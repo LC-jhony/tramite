@@ -14,23 +14,41 @@ class DocumentTypesTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->heading('Tipos de Documento')
+            ->description('Gestiona los tipos de documento del sistema.')
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('code')
-                    ->searchable(),
+                    ->label('Código')
+                    ->searchable()
+                    ->sortable()
+                    ->copyable()
+                    ->toggleable(),
                 TextColumn::make('name')
-                    ->searchable(),
+                    ->label('Nombre')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
                 IconColumn::make('requires_response')
-                    ->boolean(),
-                TextColumn::make('response_days')
-                    ->numeric()
+                    ->label('Requiere Respuesta')
+                    ->boolean()
                     ->sortable(),
+                TextColumn::make('response_days')
+                    ->label('Días de Respuesta')
+                    ->numeric()
+                    ->sortable()
+                    ->toggleable(),
                 IconColumn::make('status')
-                    ->boolean(),
+                    ->label('Estado')
+                    ->boolean()
+                    ->sortable(),
                 TextColumn::make('created_at')
+                    ->label('Creado')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label('Actualizado')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -45,6 +63,11 @@ class DocumentTypesTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('No hay tipos de documento')
+            ->emptyStateDescription('Crea el primer tipo de documento para comenzar.')
+            ->emptyStateIcon('heroicon-o-document-text')
+            ->paginationPageOptions([5])
+            ->striped();
     }
 }
