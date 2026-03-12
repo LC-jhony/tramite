@@ -76,7 +76,10 @@ class Document extends Model
         'condition',
         'status',
     ];
-
+    public function documentFiles(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(DocumentFile::class);
+    }
     public function customer(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Customer::class);
