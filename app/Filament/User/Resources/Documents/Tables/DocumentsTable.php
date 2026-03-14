@@ -27,7 +27,8 @@ class DocumentsTable
                     ->sortable(),
                 TextColumn::make('customer.full_name')
                     ->label('Cliente')
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('N/A.'),
                 TextColumn::make('case_number')
                     ->label('Expediente')
                     ->searchable(),
@@ -43,7 +44,7 @@ class DocumentsTable
                 TextColumn::make('status')
                     ->label('Estado')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'registrado' => 'info',
                         'en_proceso' => 'warning',
                         'finalizado' => 'success',
@@ -85,20 +86,20 @@ class DocumentsTable
                         return $query
                             ->when(
                                 $data['from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('reception_date', '>=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('reception_date', '>=', $date),
                             )
                             ->when(
                                 $data['until'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('reception_date', '<=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('reception_date', '<=', $date),
                             );
                     })
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
                         if ($data['from'] ?? null) {
-                            $indicators['from'] = 'Desde '.\Carbon\Carbon::parse($data['from'])->toFormattedDateString();
+                            $indicators['from'] = 'Desde ' . \Carbon\Carbon::parse($data['from'])->toFormattedDateString();
                         }
                         if ($data['until'] ?? null) {
-                            $indicators['until'] = 'Hasta '.\Carbon\Carbon::parse($data['until'])->toFormattedDateString();
+                            $indicators['until'] = 'Hasta ' . \Carbon\Carbon::parse($data['until'])->toFormattedDateString();
                         }
 
                         return $indicators;

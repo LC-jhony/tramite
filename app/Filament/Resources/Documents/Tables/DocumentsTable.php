@@ -39,7 +39,8 @@ class DocumentsTable
                     ->label('Cliente')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->placeholder('No description.'),
                 TextColumn::make('origen')
                     ->label('Origen')
                     ->searchable()
