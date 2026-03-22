@@ -15,8 +15,8 @@ class ComposerStaticInit13b92f08e6cd2bb4a3c43dc32a79f027
         'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         '606a39d89246991a373564698c2d8383' => __DIR__ . '/..' . '/symfony/polyfill-php85/bootstrap.php',
-        '47e1160838b5e5a10346ac4084b58c23' => __DIR__ . '/..' . '/laravel/prompts/src/helpers.php',
         '29ffe97919493792170d47eb03a68da9' => __DIR__ . '/..' . '/blade-ui-kit/blade-icons/src/helpers.php',
+        '47e1160838b5e5a10346ac4084b58c23' => __DIR__ . '/..' . '/laravel/prompts/src/helpers.php',
         '40275907c8566c390185147049ef6e5d' => __DIR__ . '/..' . '/livewire/livewire/src/helpers.php',
         '2c620c99f96a2b964346b45a4d1d1e64' => __DIR__ . '/..' . '/spatie/invade/src/functions.php',
         'e125f489d647ae664b0af7b573079de7' => __DIR__ . '/..' . '/filament/support/src/helpers.php',
@@ -263,6 +263,8 @@ class ComposerStaticInit13b92f08e6cd2bb4a3c43dc32a79f027
             'CrescentPurchasing\\FilamentAuditing\\' => 36,
             'Composer\\Pcre\\' => 14,
             'Composer\\ClassMapGenerator\\' => 27,
+            'Codeat3\\BladeClarityIcons\\' => 26,
+            'Codeat3\\BladeCarbonIcons\\' => 25,
             'Carbon\\Doctrine\\' => 16,
             'Carbon\\' => 7,
         ),
@@ -280,6 +282,7 @@ class ComposerStaticInit13b92f08e6cd2bb4a3c43dc32a79f027
         array (
             'Asmit\\FilamentUpload\\' => 21,
             'App\\' => 4,
+            'AndreiIonita\\BladeIconoir\\' => 26,
             'Afatmustafa\\HugeIcons\\' => 22,
         ),
     );
@@ -849,6 +852,14 @@ class ComposerStaticInit13b92f08e6cd2bb4a3c43dc32a79f027
         array (
             0 => __DIR__ . '/..' . '/composer/class-map-generator/src',
         ),
+        'Codeat3\\BladeClarityIcons\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/codeat3/blade-clarity-icons/src',
+        ),
+        'Codeat3\\BladeCarbonIcons\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/codeat3/blade-carbon-icons/src',
+        ),
         'Carbon\\Doctrine\\' =>
         array (
             0 => __DIR__ . '/..' . '/carbonphp/carbon-doctrine-types/src/Carbon/Doctrine',
@@ -894,6 +905,10 @@ class ComposerStaticInit13b92f08e6cd2bb4a3c43dc32a79f027
             0 => __DIR__ . '/../..' . '/app',
             1 => __DIR__ . '/..' . '/laravel/pint/app',
         ),
+        'AndreiIonita\\BladeIconoir\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/andreiio/blade-iconoir/src',
+        ),
         'Afatmustafa\\HugeIcons\\' =>
         array (
             0 => __DIR__ . '/..' . '/afatmustafa/blade-hugeicons/src',
@@ -923,6 +938,7 @@ class ComposerStaticInit13b92f08e6cd2bb4a3c43dc32a79f027
 
     public static $classMap = array (
         'Afatmustafa\\HugeIcons\\BladeHugeIconsServiceProvider' => __DIR__ . '/..' . '/afatmustafa/blade-hugeicons/src/BladeHugeIconsServiceProvider.php',
+        'AndreiIonita\\BladeIconoir\\BladeIconoirServiceProvider' => __DIR__ . '/..' . '/andreiio/blade-iconoir/src/BladeIconoirServiceProvider.php',
         'App\\Enum\\DocumentStatus' => __DIR__ . '/../..' . '/app/Enum/DocumentStatus.php',
         'App\\Enum\\MovementAction' => __DIR__ . '/../..' . '/app/Enum/MovementAction.php',
         'App\\Filament\\Resources\\Administrations\\AdministrationResource' => __DIR__ . '/../..' . '/app/Filament/Resources/Administrations/AdministrationResource.php',
@@ -1218,6 +1234,8 @@ class ComposerStaticInit13b92f08e6cd2bb4a3c43dc32a79f027
         'Carbon\\Unit' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Unit.php',
         'Carbon\\WeekDay' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/WeekDay.php',
         'Carbon\\WrapperClock' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/WrapperClock.php',
+        'Codeat3\\BladeCarbonIcons\\BladeCarbonIconsServiceProvider' => __DIR__ . '/..' . '/codeat3/blade-carbon-icons/src/BladeCarbonIconsServiceProvider.php',
+        'Codeat3\\BladeClarityIcons\\BladeClarityIconsServiceProvider' => __DIR__ . '/..' . '/codeat3/blade-clarity-icons/src/BladeClarityIconsServiceProvider.php',
         'Composer\\ClassMapGenerator\\ClassMap' => __DIR__ . '/..' . '/composer/class-map-generator/src/ClassMap.php',
         'Composer\\ClassMapGenerator\\ClassMapGenerator' => __DIR__ . '/..' . '/composer/class-map-generator/src/ClassMapGenerator.php',
         'Composer\\ClassMapGenerator\\FileList' => __DIR__ . '/..' . '/composer/class-map-generator/src/FileList.php',

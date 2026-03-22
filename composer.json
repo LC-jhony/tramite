@@ -8,8 +8,11 @@
     "require": {
         "php": "^8.2",
         "afatmustafa/blade-hugeicons": "^2.0",
+        "andreiio/blade-iconoir": "^4.7",
         "asmit/filament-upload": "^2.0",
         "bezhansalleh/filament-shield": "^4.1",
+        "codeat3/blade-carbon-icons": "^2.39",
+        "codeat3/blade-clarity-icons": "^1.11",
         "crescent-purchasing/filament-auditing": "^2.0",
         "davidhsianturi/blade-bootstrap-icons": "^2.1",
         "filament/filament": "^5.3",

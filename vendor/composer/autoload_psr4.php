@@ -144,6 +144,8 @@ return array(
     'CrescentPurchasing\\FilamentAuditing\\' => array($vendorDir . '/crescent-purchasing/filament-auditing/src'),
     'Composer\\Pcre\\' => array($vendorDir . '/composer/pcre/src'),
     'Composer\\ClassMapGenerator\\' => array($vendorDir . '/composer/class-map-generator/src'),
+    'Codeat3\\BladeClarityIcons\\' => array($vendorDir . '/codeat3/blade-clarity-icons/src'),
+    'Codeat3\\BladeCarbonIcons\\' => array($vendorDir . '/codeat3/blade-carbon-icons/src'),
     'Carbon\\Doctrine\\' => array($vendorDir . '/carbonphp/carbon-doctrine-types/src/Carbon/Doctrine'),
     'Carbon\\' => array($vendorDir . '/nesbot/carbon/src/Carbon'),
     'Brick\\Math\\' => array($vendorDir . '/brick/math/src'),
@@ -155,5 +157,6 @@ return array(
     'Barryvdh\\LaravelIdeHelper\\' => array($vendorDir . '/barryvdh/laravel-ide-helper/src'),
     'Asmit\\FilamentUpload\\' => array($vendorDir . '/asmit/filament-upload/src'),
     'App\\' => array($baseDir . '/app', $vendorDir . '/laravel/pint/app'),
+    'AndreiIonita\\BladeIconoir\\' => array($vendorDir . '/andreiio/blade-iconoir/src'),
     'Afatmustafa\\HugeIcons\\' => array($vendorDir . '/afatmustafa/blade-hugeicons/src'),
 );

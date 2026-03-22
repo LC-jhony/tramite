@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Afatmustafa\\HugeIcons\\BladeHugeIconsServiceProvider' => $vendorDir . '/afatmustafa/blade-hugeicons/src/BladeHugeIconsServiceProvider.php',
+    'AndreiIonita\\BladeIconoir\\BladeIconoirServiceProvider' => $vendorDir . '/andreiio/blade-iconoir/src/BladeIconoirServiceProvider.php',
     'App\\Enum\\DocumentStatus' => $baseDir . '/app/Enum/DocumentStatus.php',
     'App\\Enum\\MovementAction' => $baseDir . '/app/Enum/MovementAction.php',
     'App\\Filament\\Resources\\Administrations\\AdministrationResource' => $baseDir . '/app/Filament/Resources/Administrations/AdministrationResource.php',
@@ -302,6 +303,8 @@ return array(
     'Carbon\\Unit' => $vendorDir . '/nesbot/carbon/src/Carbon/Unit.php',
     'Carbon\\WeekDay' => $vendorDir . '/nesbot/carbon/src/Carbon/WeekDay.php',
     'Carbon\\WrapperClock' => $vendorDir . '/nesbot/carbon/src/Carbon/WrapperClock.php',
+    'Codeat3\\BladeCarbonIcons\\BladeCarbonIconsServiceProvider' => $vendorDir . '/codeat3/blade-carbon-icons/src/BladeCarbonIconsServiceProvider.php',
+    'Codeat3\\BladeClarityIcons\\BladeClarityIconsServiceProvider' => $vendorDir . '/codeat3/blade-clarity-icons/src/BladeClarityIconsServiceProvider.php',
     'Composer\\ClassMapGenerator\\ClassMap' => $vendorDir . '/composer/class-map-generator/src/ClassMap.php',
     'Composer\\ClassMapGenerator\\ClassMapGenerator' => $vendorDir . '/composer/class-map-generator/src/ClassMapGenerator.php',
     'Composer\\ClassMapGenerator\\FileList' => $vendorDir . '/composer/class-map-generator/src/FileList.php',

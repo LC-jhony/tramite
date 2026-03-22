@@ -18,7 +18,7 @@ class AdministrationResource extends Resource
 {
     protected static ?string $model = Administration::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = 'clarity-administrator-line';
 
     protected static ?string $recordTitleAttribute = 'name';
 
