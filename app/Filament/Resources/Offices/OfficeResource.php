@@ -9,6 +9,7 @@ use App\Filament\Resources\Offices\Schemas\OfficeForm;
 use App\Filament\Resources\Offices\Tables\OfficesTable;
 use App\Models\Office;
 use BackedEnum;
+use CrescentPurchasing\FilamentAuditing\Filament\RelationManagers\AuditsRelationManager;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -35,7 +36,7 @@ class OfficeResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            AuditsRelationManager::class,
         ];
     }
 

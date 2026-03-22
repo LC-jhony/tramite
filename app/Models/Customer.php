@@ -2,8 +2,14 @@
 
 namespace App\Models;
 
+use Database\Factories\CustomerFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * @property int $id
@@ -17,10 +23,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $address
  * @property string|null $ruc
  * @property string|null $company
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property string|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Document> $documents
+ * @property-read Collection<int, Document> $documents
  * @property-read int|null $documents_count
  *
  * @method static \Database\Factories\CustomerFactory factory($count = null, $state = [])
@@ -44,10 +50,10 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class Customer extends Model
+class Customer extends Model implements AuditableContract
 {
-    /** @use HasFactory<\Database\Factories\CustomerFactory> */
-    use HasFactory;
+    /** @use HasFactory<CustomerFactory> */
+    use Auditable, HasFactory;
 
     protected $fillable = [
         'representation',
@@ -62,7 +68,7 @@ class Customer extends Model
         'company',
     ];
 
-    public function documents(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function documents(): HasMany
     {
         return $this->hasMany(Document::class);
     }

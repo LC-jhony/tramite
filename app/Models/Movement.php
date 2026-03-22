@@ -3,6 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * @property int $id
@@ -14,12 +18,12 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $indication
  * @property string|null $observation
  * @property string $receipt_date
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Document $document
- * @property-read \App\Models\Office|null $fromOffice
- * @property-read \App\Models\Office|null $toOffice
- * @property-read \App\Models\User $user
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Document $document
+ * @property-read Office|null $fromOffice
+ * @property-read Office|null $toOffice
+ * @property-read User $user
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Movement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Movement newQuery()
@@ -38,8 +42,10 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class Movement extends Model
+class Movement extends Model implements AuditableContract
 {
+    use Auditable;
+
     protected $fillable = [
         'document_id',
         'user_id',
@@ -51,22 +57,22 @@ class Movement extends Model
         'receipt_date',
     ];
 
-    public function document(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function document(): BelongsTo
     {
         return $this->belongsTo(Document::class);
     }
 
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function fromOffice(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function fromOffice(): BelongsTo
     {
         return $this->belongsTo(Office::class, 'from_office_id');
     }
 
-    public function toOffice(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function toOffice(): BelongsTo
     {
         return $this->belongsTo(Office::class, 'to_office_id');
     }

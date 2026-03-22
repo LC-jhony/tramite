@@ -2,8 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * @property int $id
@@ -12,9 +17,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $requires_response
  * @property int|null $response_days
  * @property int $status
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Document> $documents
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Collection<int, Document> $documents
  * @property-read int|null $documents_count
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentType newModelQuery()
@@ -31,9 +36,9 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class DocumentType extends Model
+class DocumentType extends Model implements AuditableContract
 {
-    use HasFactory;
+    use Auditable, HasFactory;
 
     protected $fillable = [
         'code',
@@ -43,7 +48,7 @@ class DocumentType extends Model
         'status',
     ];
 
-    public function documents(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function documents(): HasMany
     {
         return $this->hasMany(Document::class);
     }

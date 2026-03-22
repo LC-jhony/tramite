@@ -9,11 +9,12 @@ use App\Filament\Resources\Users\Schemas\UserForm;
 use App\Filament\Resources\Users\Tables\UsersTable;
 use App\Models\User;
 use BackedEnum;
-use UnitEnum;
+use CrescentPurchasing\FilamentAuditing\Filament\RelationManagers\OwnedAuditsRelationManager;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class UserResource extends Resource
 {
@@ -22,7 +23,9 @@ class UserResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
 
     protected static ?string $recordTitleAttribute = 'name';
-    protected static string | UnitEnum | null $navigationGroup = 'Settings';
+
+    protected static string|UnitEnum|null $navigationGroup = 'Settings';
+
     public static function form(Schema $schema): Schema
     {
         return UserForm::configure($schema);
@@ -36,7 +39,7 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            OwnedAuditsRelationManager::class,
         ];
     }
 

@@ -2,8 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Carbon;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * @property int $id
@@ -22,17 +28,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $condition
  * @property string $status
  * @property int|null $priority_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property string|null $deleted_at
- * @property-read \App\Models\Administration $administration
- * @property-read \App\Models\Office $currentOffice
- * @property-read \App\Models\Customer|null $customer
- * @property-read \App\Models\Movement|null $latestMovement
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Movement> $movements
+ * @property-read Administration $administration
+ * @property-read Office $currentOffice
+ * @property-read Customer|null $customer
+ * @property-read Movement|null $latestMovement
+ * @property-read Collection<int, Movement> $movements
  * @property-read int|null $movements_count
- * @property-read \App\Models\DocumentType $type
- * @property-read \App\Models\User|null $user
+ * @property-read DocumentType $type
+ * @property-read User|null $user
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Document newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Document newQuery()
@@ -59,8 +65,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
-class Document extends Model
+class Document extends Model implements AuditableContract
 {
+    use Auditable;
+
     protected $fillable = [
         'customer_id',
         'document_number',
@@ -78,50 +86,53 @@ class Document extends Model
         'status',
         'priority_id',
     ];
+
     public function priority(): BelongsTo
     {
         return $this->belongsTo(Priority::class);
     }
-    public function documentFiles(): \Illuminate\Database\Eloquent\Relations\HasMany
+
+    public function documentFiles(): HasMany
     {
         return $this->hasMany(DocumentFile::class);
     }
-    public function customer(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+
+    public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
     }
 
-    public function type(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function type(): BelongsTo
     {
         return $this->belongsTo(DocumentType::class, 'document_type_id');
     }
 
-    public function currentOffice(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function currentOffice(): BelongsTo
     {
         return $this->belongsTo(Office::class, 'current_office_id');
     }
 
-    public function administration(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function administration(): BelongsTo
     {
         return $this->belongsTo(Administration::class, 'gestion_id');
     }
 
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function movements(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function movements(): HasMany
     {
         return $this->hasMany(Movement::class);
     }
 
-    public function latestMovement(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function latestMovement(): HasOne
     {
         return $this->hasOne(Movement::class)->latestOfMany();
     }
 
-    public function receptions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function receptions(): HasMany
     {
         return $this->hasMany(DocumentReception::class);
     }
