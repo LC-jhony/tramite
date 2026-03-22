@@ -3,7 +3,7 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '4a14906246016131bc131b5b569b0fb1149a0c69',
+        'reference' => '508ab4af32c403d05ac6ea9e9fb05cbb39997313',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -54,6 +54,15 @@
             'install_path' => __DIR__ . '/../barryvdh/reflection-docblock',
             'aliases' => array(),
             'dev_requirement' => true,
+        ),
+        'bezhansalleh/filament-panel-switch' => array(
+            'pretty_version' => '3.0.0',
+            'version' => '3.0.0.0',
+            'reference' => '47f8cf7c19152f7009025f57b1eb41fef7bf12da',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../bezhansalleh/filament-panel-switch',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
         'bezhansalleh/filament-plugin-essentials' => array(
             'pretty_version' => '1.1.0',
@@ -724,7 +733,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '4a14906246016131bc131b5b569b0fb1149a0c69',
+            'reference' => '508ab4af32c403d05ac6ea9e9fb05cbb39997313',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

@@ -1,0 +1,13 @@
+{
+    "preset": "laravel",
+    "rules": {
+        "single_blank_line_at_eof": false,
+        "concat_space": {
+            "spacing": "one"
+        },
+        "single_trait_insert_per_statement": true,
+        "types_spaces": {
+            "space": "single"
+        }
+    }
+}

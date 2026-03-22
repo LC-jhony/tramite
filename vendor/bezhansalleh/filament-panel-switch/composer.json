@@ -1,0 +1,65 @@
+{
+    "name": "bezhansalleh/filament-panel-switch",
+    "description": "Easily Switch between your Filament Panels",
+    "keywords": [
+        "bezhanSalleh",
+        "filament",
+        "panel-switch",
+        "filament-panel-switch",
+        "panel-changer",
+        "panel-navigation"
+    ],
+    "homepage": "https://github.com/bezhansalleh/filament-panel-switch",
+    "support": {
+        "issues": "https://github.com/bezhansalleh/filament-panel-switch/issues",
+        "source": "https://github.com/bezhansalleh/filament-panel-switch"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Bezhan Salleh",
+            "email": "bezhan_salleh@yahoo.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "filament/filament": "^4.0|^5.0",
+        "illuminate/support": "^11.28|^12.0",
+        "league/uri": "^7.0",
+        "spatie/laravel-package-tools": "^1.9"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.0",
+        "spatie/laravel-ray": "^1.26"
+    },
+    "autoload": {
+        "psr-4": {
+            "BezhanSalleh\\PanelSwitch\\": "src/",
+            "BezhanSalleh\\PanelSwitch\\Database\\Factories\\": "database/factories/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "BezhanSalleh\\PanelSwitch\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "lint": "pint"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "BezhanSalleh\\PanelSwitch\\PanelSwitchServiceProvider"
+            ],
+            "aliases": {
+                "PanelSwitch": "BezhanSalleh\\PanelSwitch\\Facades\\PanelSwitch"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

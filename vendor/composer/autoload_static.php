@@ -27,9 +27,9 @@ class ComposerStaticInit13b92f08e6cd2bb4a3c43dc32a79f027
         '2ad94ea6f6f6013119e9abcf4e302a08' => __DIR__ . '/..' . '/filament/forms/src/helpers.php',
         'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
+        '6d4419a22bfb72a20b561583f68f48b3' => __DIR__ . '/..' . '/filament/notifications/src/Testing/helpers.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
-        '6d4419a22bfb72a20b561583f68f48b3' => __DIR__ . '/..' . '/filament/notifications/src/Testing/helpers.php',
         '35a6ad97d21e794e7e22a17d806652e4' => __DIR__ . '/..' . '/nunomaduro/termwind/src/Functions.php',
         '89e9938b64b06cc502d7ceca69a380fe' => __DIR__ . '/..' . '/filament/filament/src/global_helpers.php',
         'ebb446bb6d02e998480945fbbb73dc64' => __DIR__ . '/..' . '/filament/filament/src/helpers.php',
@@ -274,6 +274,8 @@ class ComposerStaticInit13b92f08e6cd2bb4a3c43dc32a79f027
             'BladeUI\\Icons\\' => 14,
             'BladeUI\\Heroicons\\' => 18,
             'BezhanSalleh\\PluginEssentials\\' => 30,
+            'BezhanSalleh\\PanelSwitch\\Database\\Factories\\' => 44,
+            'BezhanSalleh\\PanelSwitch\\' => 25,
             'BezhanSalleh\\FilamentShield\\Database\\Factories\\' => 47,
             'BezhanSalleh\\FilamentShield\\' => 28,
             'Barryvdh\\LaravelIdeHelper\\' => 26,
@@ -884,6 +886,14 @@ class ComposerStaticInit13b92f08e6cd2bb4a3c43dc32a79f027
         array (
             0 => __DIR__ . '/..' . '/bezhansalleh/filament-plugin-essentials/src',
         ),
+        'BezhanSalleh\\PanelSwitch\\Database\\Factories\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/bezhansalleh/filament-panel-switch/database/factories',
+        ),
+        'BezhanSalleh\\PanelSwitch\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/bezhansalleh/filament-panel-switch/src',
+        ),
         'BezhanSalleh\\FilamentShield\\Database\\Factories\\' =>
         array (
             0 => __DIR__ . '/..' . '/bezhansalleh/filament-shield/database/factories',
@@ -1096,6 +1106,10 @@ class ComposerStaticInit13b92f08e6cd2bb4a3c43dc32a79f027
         'BezhanSalleh\\FilamentShield\\Traits\\HasPanelShield' => __DIR__ . '/..' . '/bezhansalleh/filament-shield/src/Traits/HasPanelShield.php',
         'BezhanSalleh\\FilamentShield\\Traits\\HasShieldFormComponents' => __DIR__ . '/..' . '/bezhansalleh/filament-shield/src/Traits/HasShieldFormComponents.php',
         'BezhanSalleh\\FilamentShield\\Traits\\HasWidgetShield' => __DIR__ . '/..' . '/bezhansalleh/filament-shield/src/Traits/HasWidgetShield.php',
+        'BezhanSalleh\\PanelSwitch\\Concerns\\HasPanelValidator' => __DIR__ . '/..' . '/bezhansalleh/filament-panel-switch/src/Concerns/HasPanelValidator.php',
+        'BezhanSalleh\\PanelSwitch\\Facades\\PanelSwitch' => __DIR__ . '/..' . '/bezhansalleh/filament-panel-switch/src/Facades/PanelSwitch.php',
+        'BezhanSalleh\\PanelSwitch\\PanelSwitch' => __DIR__ . '/..' . '/bezhansalleh/filament-panel-switch/src/PanelSwitch.php',
+        'BezhanSalleh\\PanelSwitch\\PanelSwitchServiceProvider' => __DIR__ . '/..' . '/bezhansalleh/filament-panel-switch/src/PanelSwitchServiceProvider.php',
         'BezhanSalleh\\PluginEssentials\\Concerns\\Plugin\\BelongsToParent' => __DIR__ . '/..' . '/bezhansalleh/filament-plugin-essentials/src/Concerns/Plugin/BelongsToParent.php',
         'BezhanSalleh\\PluginEssentials\\Concerns\\Plugin\\BelongsToTenant' => __DIR__ . '/..' . '/bezhansalleh/filament-plugin-essentials/src/Concerns/Plugin/BelongsToTenant.php',
         'BezhanSalleh\\PluginEssentials\\Concerns\\Plugin\\HasGlobalSearch' => __DIR__ . '/..' . '/bezhansalleh/filament-plugin-essentials/src/Concerns/Plugin/HasGlobalSearch.php',

@@ -152,6 +152,8 @@ return array(
     'BladeUI\\Icons\\' => array($vendorDir . '/blade-ui-kit/blade-icons/src'),
     'BladeUI\\Heroicons\\' => array($vendorDir . '/blade-ui-kit/blade-heroicons/src'),
     'BezhanSalleh\\PluginEssentials\\' => array($vendorDir . '/bezhansalleh/filament-plugin-essentials/src'),
+    'BezhanSalleh\\PanelSwitch\\Database\\Factories\\' => array($vendorDir . '/bezhansalleh/filament-panel-switch/database/factories'),
+    'BezhanSalleh\\PanelSwitch\\' => array($vendorDir . '/bezhansalleh/filament-panel-switch/src'),
     'BezhanSalleh\\FilamentShield\\Database\\Factories\\' => array($vendorDir . '/bezhansalleh/filament-shield/database/factories'),
     'BezhanSalleh\\FilamentShield\\' => array($vendorDir . '/bezhansalleh/filament-shield/src'),
     'Barryvdh\\LaravelIdeHelper\\' => array($vendorDir . '/barryvdh/laravel-ide-helper/src'),
