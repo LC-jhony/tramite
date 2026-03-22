@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Enum\DocumentStatus;
+use App\Filament\Resources\Customers\Schemas\CustomerForm;
 use App\Filament\User\Resources\Documents\Schemas\DocumentForm;
 use App\Mail\RegisterDocumentCustomer;
 use App\Models\Administration;
@@ -18,18 +19,15 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
@@ -56,8 +54,8 @@ class DocumentRegister extends Component implements HasActions, HasSchemas
                             ->schema([
                                 Select::make('customer_id')
                                     ->label('Usuario')
-                                    ->options(fn() => $this->getCustomerOptions())
-                                    ->getSearchResultsUsing(fn(string $search) => $this->searchCustomers($search))
+                                    ->options(fn () => $this->getCustomerOptions())
+                                    ->getSearchResultsUsing(fn (string $search) => $this->searchCustomers($search))
                                     ->searchable()
                                     ->createOptionForm(self::customerForm())
                                     ->preload()
@@ -223,45 +221,7 @@ class DocumentRegister extends Component implements HasActions, HasSchemas
 
     private function customerForm(): array
     {
-        return [
-            Toggle::make('representation')
-                ->required()
-                ->label('Representación'),
-            TextInput::make('full_name')
-                ->label('Nombre Completo')
-                ->required()
-                ->maxLength(255),
-            TextInput::make('first_name')
-                ->label('Nombres')
-                ->maxLength(100),
-            TextInput::make('last_name')
-                ->label('Apellidos')
-                ->maxLength(100),
-            TextInput::make('dni')
-                ->label('DNI')
-                ->numeric()
-                ->length(8)
-                ->maxLength(8),
-            TextInput::make('phone')
-                ->label('Teléfono')
-                ->tel()
-                ->maxLength(20),
-            TextInput::make('email')
-                ->label('Correo Electrónico')
-                ->email()
-                ->maxLength(255),
-            TextInput::make('address')
-                ->label('Dirección')
-                ->maxLength(255),
-            TextInput::make('ruc')
-                ->label('RUC')
-                ->numeric()
-                ->length(11)
-                ->maxLength(11),
-            TextInput::make('company')
-                ->label('Empresa')
-                ->maxLength(255),
-        ];
+        return CustomerForm::getComponents();
     }
 
     private function getCustomerOptions(): array
@@ -269,14 +229,14 @@ class DocumentRegister extends Component implements HasActions, HasSchemas
         return Customer::query()
             ->limit(50)
             ->get()
-            ->mapWithKeys(fn($customer) => $this->formatCustomerOption($customer))
+            ->mapWithKeys(fn ($customer) => $this->formatCustomerOption($customer))
             ->toArray();
     }
 
     private function searchCustomers(string $search): array
     {
         return Customer::where(
-            fn($query) => $query
+            fn ($query) => $query
                 ->where('full_name', 'like', "%{$search}%")
                 ->orWhere('dni', 'like', "%{$search}%")
                 ->orWhere('ruc', 'like', "%{$search}%")
@@ -284,7 +244,7 @@ class DocumentRegister extends Component implements HasActions, HasSchemas
         )
             ->limit(50)
             ->get()
-            ->mapWithKeys(fn($customer) => $this->formatCustomerOption($customer))
+            ->mapWithKeys(fn ($customer) => $this->formatCustomerOption($customer))
             ->toArray();
     }
 

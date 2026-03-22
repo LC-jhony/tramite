@@ -2,11 +2,13 @@
 
 namespace App\Filament\User\Pages;
 
+use App\Filament\Resources\Customers\Schemas\CustomerForm;
 use App\Models\Document;
 use App\Models\Priority;
 use App\Trait\HasForwardAction;
 use App\Trait\HasReceiveAction;
 use App\Trait\HasRejectAction;
+use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Resources\Concerns\HasTabs;
 use Filament\Schemas\Components\EmbeddedTable;
@@ -101,7 +103,7 @@ class DocumentReception extends Page implements HasTable
                     ->label('Remitente')
                     ->searchable()
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         default => 'info',
                     }),
                 TextColumn::make('type.name')
@@ -113,7 +115,7 @@ class DocumentReception extends Page implements HasTable
                     ->label('Derivado a')
                     ->searchable()
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         default => 'info',
                     }),
                 TextColumn::make('reception_date')
@@ -130,7 +132,12 @@ class DocumentReception extends Page implements HasTable
                     ->label('documentos')
                     ->icon('bi-file-pdf')
                     ->color('danger')
-                    ->media(fn($record) => $record->file ? asset('storage/' . $record->file) : null),
+                    ->media(fn ($record) => $record->file ? asset('storage/'.$record->file) : null),
             ]);
+    }
+
+    public static function customerForm(Form $form): Form
+    {
+        return $form->schema(CustomerForm::getComponents());
     }
 }
