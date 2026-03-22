@@ -6,6 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Afatmustafa\\HugeIcons\\BladeHugeIconsServiceProvider' => $vendorDir . '/afatmustafa/blade-hugeicons/src/BladeHugeIconsServiceProvider.php',
     'App\\Enum\\DocumentStatus' => $baseDir . '/app/Enum/DocumentStatus.php',
     'App\\Enum\\MovementAction' => $baseDir . '/app/Enum/MovementAction.php',
     'App\\Filament\\Resources\\Administrations\\AdministrationResource' => $baseDir . '/app/Filament/Resources/Administrations/AdministrationResource.php',

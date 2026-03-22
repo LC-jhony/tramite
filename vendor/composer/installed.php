@@ -3,13 +3,22 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'cc8969016704eeaddd55538f0d8e67482914e59d',
+        'reference' => 'cc19741e7bac14ddd5b14841e885f33e241217e0',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
         'dev' => true,
     ),
     'versions' => array(
+        'afatmustafa/blade-hugeicons' => array(
+            'pretty_version' => 'v2.0.1',
+            'version' => '2.0.1.0',
+            'reference' => '90c401efd00d2856fd16644a1b96b89c874b5aa2',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../afatmustafa/blade-hugeicons',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'asmit/filament-upload' => array(
             'pretty_version' => 'v2.0.0',
             'version' => '2.0.0.0',
@@ -688,7 +697,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'cc8969016704eeaddd55538f0d8e67482914e59d',
+            'reference' => 'cc19741e7bac14ddd5b14841e885f33e241217e0',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

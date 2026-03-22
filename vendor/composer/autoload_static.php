@@ -280,6 +280,7 @@ class ComposerStaticInit13b92f08e6cd2bb4a3c43dc32a79f027
         array (
             'Asmit\\FilamentUpload\\' => 21,
             'App\\' => 4,
+            'Afatmustafa\\HugeIcons\\' => 22,
         ),
     );
 
@@ -893,6 +894,10 @@ class ComposerStaticInit13b92f08e6cd2bb4a3c43dc32a79f027
             0 => __DIR__ . '/../..' . '/app',
             1 => __DIR__ . '/..' . '/laravel/pint/app',
         ),
+        'Afatmustafa\\HugeIcons\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/afatmustafa/blade-hugeicons/src',
+        ),
     );
 
     public static $prefixesPsr0 = array (
@@ -917,6 +922,7 @@ class ComposerStaticInit13b92f08e6cd2bb4a3c43dc32a79f027
     );
 
     public static $classMap = array (
+        'Afatmustafa\\HugeIcons\\BladeHugeIconsServiceProvider' => __DIR__ . '/..' . '/afatmustafa/blade-hugeicons/src/BladeHugeIconsServiceProvider.php',
         'App\\Enum\\DocumentStatus' => __DIR__ . '/../..' . '/app/Enum/DocumentStatus.php',
         'App\\Enum\\MovementAction' => __DIR__ . '/../..' . '/app/Enum/MovementAction.php',
         'App\\Filament\\Resources\\Administrations\\AdministrationResource' => __DIR__ . '/../..' . '/app/Filament/Resources/Administrations/AdministrationResource.php',

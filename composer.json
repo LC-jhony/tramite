@@ -7,6 +7,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "afatmustafa/blade-hugeicons": "^2.0",
         "asmit/filament-upload": "^2.0",
         "bezhansalleh/filament-shield": "^4.1",
         "crescent-purchasing/filament-auditing": "^2.0",

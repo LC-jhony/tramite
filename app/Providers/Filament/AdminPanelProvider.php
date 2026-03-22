@@ -66,8 +66,8 @@ class AdminPanelProvider extends PanelProvider
                 FilamentShieldPlugin::make(),
                 FilamentAuditingPlugin::make()
                     ->formatAuditableTypeUsing(fn(string $value): string => strtoupper($value))
-                    ->navigationGroup('Administration')
-                    ->navigationIcon('heroicon-o-check'),
+                    ->navigationGroup('Settings')
+                    ->navigationIcon('hugeicons-audit-02'),
             ])
             ->authMiddleware([
                 Authenticate::class,

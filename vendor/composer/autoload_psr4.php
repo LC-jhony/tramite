@@ -155,4 +155,5 @@ return array(
     'Barryvdh\\LaravelIdeHelper\\' => array($vendorDir . '/barryvdh/laravel-ide-helper/src'),
     'Asmit\\FilamentUpload\\' => array($vendorDir . '/asmit/filament-upload/src'),
     'App\\' => array($baseDir . '/app', $vendorDir . '/laravel/pint/app'),
+    'Afatmustafa\\HugeIcons\\' => array($vendorDir . '/afatmustafa/blade-hugeicons/src'),
 );
