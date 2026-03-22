@@ -1,1 +1,34 @@
-node_modules
+# Laravel
+/vendor/
+/node_modules/
+/.env
+/.env.*
+/.phpunit.result.cache
+/storage/*.key
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+/bootstrap/cache/*
+/.phpunit.cache/
+
+# Build assets
+/public/build
+/public/hot
+/public/storage
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+
+# Misc
+*.log
