@@ -22,19 +22,4 @@ class EditAdministration extends EditRecord
     {
         return $this->getResource()::getUrl('index');
     }
-
-    protected function mutateFormDataBeforeSave(array $data): array
-    {
-        Administration::where('status', 1)
-            ->where('id', '!=', $this->record->id)
-            ->update(['status' => 0]);
-
-        if (! empty($data['start_period']) && is_numeric($data['start_period'])) {
-            $endYear = (int) $data['start_period'] + 3;
-            $data['end_period'] = (string) $endYear;
-            $data['name'] = 'Gestión '.$data['start_period'].' - '.$endYear;
-        }
-
-        return $data;
-    }
 }
