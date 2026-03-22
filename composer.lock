@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a21bdd621dcbac4dd5f1977b03311e86",
+    "content-hash": "b5fa4f14a88a0f3af42c93eca793c8fe",
     "packages": [
         {
             "name": "afatmustafa/blade-hugeicons",
@@ -172,6 +172,81 @@
                 "source": "https://github.com/AsmitNepali/filament-upload/tree/v2.0.0"
             },
             "time": "2026-01-17T06:36:31+00:00"
+        },
+        {
+            "name": "bezhansalleh/filament-panel-switch",
+            "version": "3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bezhanSalleh/filament-panel-switch.git",
+                "reference": "47f8cf7c19152f7009025f57b1eb41fef7bf12da"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bezhanSalleh/filament-panel-switch/zipball/47f8cf7c19152f7009025f57b1eb41fef7bf12da",
+                "reference": "47f8cf7c19152f7009025f57b1eb41fef7bf12da",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^4.0|^5.0",
+                "illuminate/support": "^11.28|^12.0",
+                "league/uri": "^7.0",
+                "php": "^8.2",
+                "spatie/laravel-package-tools": "^1.9"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.0",
+                "spatie/laravel-ray": "^1.26"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "PanelSwitch": "BezhanSalleh\\PanelSwitch\\Facades\\PanelSwitch"
+                    },
+                    "providers": [
+                        "BezhanSalleh\\PanelSwitch\\PanelSwitchServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "BezhanSalleh\\PanelSwitch\\": "src/",
+                    "BezhanSalleh\\PanelSwitch\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bezhan Salleh",
+                    "email": "bezhan_salleh@yahoo.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Easily Switch between your Filament Panels",
+            "homepage": "https://github.com/bezhansalleh/filament-panel-switch",
+            "keywords": [
+                "bezhanSalleh",
+                "filament",
+                "filament-panel-switch",
+                "panel-changer",
+                "panel-navigation",
+                "panel-switch"
+            ],
+            "support": {
+                "issues": "https://github.com/bezhansalleh/filament-panel-switch/issues",
+                "source": "https://github.com/bezhansalleh/filament-panel-switch"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/bezhanSalleh",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-02-08T06:11:55+00:00"
         },
         {
             "name": "bezhansalleh/filament-plugin-essentials",
