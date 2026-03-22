@@ -1,0 +1,26 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+.fi-topbar {
+    @apply !bg-inherit ring-0 shadow-none;
+}
+
+.fi-sidebar-header {
+    @apply !bg-inherit ring-0 shadow-none;
+}
+
+.fi-btn[class*="fi-color-"]:is([class*="fi-bg-color-"]) {
+    background-color: var(--color-600) !important;
+    color: white !important;
+}
+
+.fi-btn[class*="fi-color-"]:hover:is([class*="fi-bg-color-"]) {
+    background-color: var(--color-500) !important;
+    color: white !important;
+}
+
+.fi-btn[class*="fi-color-"]:is([class*="fi-bg-color-"]) svg {
+    color: inherit !important;
+}

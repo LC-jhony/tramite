@@ -1,0 +1,286 @@
+<?php
+
+namespace CrescentPurchasing\FilamentAuditing\Filament\Resources\Audits;
+
+use CrescentPurchasing\FilamentAuditing\Actions\FormatAuditableType;
+use CrescentPurchasing\FilamentAuditing\Actions\FormatEvent;
+use CrescentPurchasing\FilamentAuditing\Actions\GetAuditable;
+use CrescentPurchasing\FilamentAuditing\Actions\GetAuditSchema;
+use CrescentPurchasing\FilamentAuditing\Actions\GetModifiedFields;
+use CrescentPurchasing\FilamentAuditing\Actions\GetUser;
+use CrescentPurchasing\FilamentAuditing\Actions\GetUserSchema;
+use CrescentPurchasing\FilamentAuditing\Filament\Actions\RestoreAuditAction;
+use CrescentPurchasing\FilamentAuditing\Filament\Actions\ViewAuditableAction;
+use CrescentPurchasing\FilamentAuditing\Filament\Actions\ViewAuditAction;
+use CrescentPurchasing\FilamentAuditing\Filament\Actions\ViewUserAction;
+use CrescentPurchasing\FilamentAuditing\Filament\Filters\QueryBuilder\AuditUserConstraint;
+use CrescentPurchasing\FilamentAuditing\Filament\Filters\QueryBuilder\AuditUserOperator;
+use CrescentPurchasing\FilamentAuditing\Filament\RelationManagers\AuditsRelationManager;
+use CrescentPurchasing\FilamentAuditing\Filament\RelationManagers\OwnedAuditsRelationManager;
+use CrescentPurchasing\FilamentAuditing\Filament\Resources\Audits\Pages\ManageAudits;
+use CrescentPurchasing\FilamentAuditing\FilamentAuditingPlugin;
+use Exception;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource as FilamentResource;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
+use Filament\Tables\Columns\Column;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\BaseFilter;
+use Filament\Tables\Filters\QueryBuilder;
+use Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint;
+use Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint;
+use Filament\Tables\Table;
+use Illuminate\Contracts\Config\Repository;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
+use OwenIt\Auditing\Models\Audit;
+
+class AuditResource extends FilamentResource
+{
+    protected static bool $isGloballySearchable = false;
+
+    public static function getModel(): string
+    {
+        return FilamentAuditingPlugin::get()->getModel();
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return FilamentAuditingPlugin::get()->getNavigationGroup();
+    }
+
+    public static function getNavigationIcon(): string | Htmlable | null
+    {
+        return FilamentAuditingPlugin::get()->getNavigationIcon();
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament-auditing::resource.title');
+    }
+
+    /**
+     * @param  Audit|null  $record
+     */
+    public static function getRecordTitle(?Model $record): string | Htmlable | null
+    {
+        $getAuditable = new GetAuditable;
+
+        $auditable = $getAuditable($record);
+
+        $recordTitle = $getAuditable->title($auditable);
+
+        return __('filament-auditing::resource.record_title', [
+            'record' => $recordTitle ?? '',
+            'id' => $auditable?->getKey() ?? '',
+            'timestamp' => $record->created_at ?? '',
+        ]);
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        $metaTab = Tab::make(__('filament-auditing::resource.tabs.meta'))
+            ->schema([
+                Grid::make([
+                    'md' => 2,
+                ])->schema([
+                    TextInput::make('event')
+                        ->label(__('filament-auditing::resource.fields.event')),
+                    DateTimePicker::make('created_at')
+                        ->label(__('filament-auditing::resource.fields.created_at')),
+                    TextInput::make('url')
+                        ->label(__('filament-auditing::resource.fields.url')),
+                    TextInput::make('ip_address')
+                        ->label(__('filament-auditing::resource.fields.ip_address')),
+                    Textarea::make('user_agent')
+                        ->rows(3)
+                        ->label(__('filament-auditing::resource.fields.user_agent')),
+                    Textarea::make('tags')
+                        ->rows(3)
+                        ->label(__('filament-auditing::resource.fields.tags')),
+                ]),
+            ]);
+
+        $userTab = Tab::make(__('filament-auditing::resource.tabs.user'))
+            ->hidden(function (Audit $record, HasSchemas $livewire): bool {
+                if ($livewire instanceof OwnedAuditsRelationManager) {
+                    return true;
+                }
+
+                return empty($record->user);
+
+            })
+            ->schema([
+                Grid::make(1)
+                    ->relationship('user')
+                    ->schema(fn (GetUserSchema $userSchema): array => $userSchema()),
+            ]);
+
+        $oldTab = Tab::make(__('filament-auditing::resource.tabs.old'))
+            ->hidden(fn (Audit $record) => empty($record->old_values))
+            ->schema(function (Audit $record, GetAuditSchema $schema, GetModifiedFields $fields): array {
+                return $schema($fields($record, true));
+            });
+
+        $newTab = Tab::make(__('filament-auditing::resource.tabs.new'))
+            ->schema(function (Audit $record, GetAuditSchema $schema, GetModifiedFields $fields): array {
+                return $schema($fields($record));
+            });
+
+        return $schema->components([
+            Tabs::make(__('filament-auditing::resource.tabs.label'))
+                ->contained(false)
+                ->columnSpanFull()
+                ->schema([$metaTab, $userTab, $oldTab, $newTab]),
+        ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+
+        $table->recordActions(static::getTableActions());
+
+        $table->columns(static::getTableColumns());
+
+        $table->defaultSort('id', 'desc');
+
+        $table->filters(static::getTableFilters());
+
+        $table->filtersFormWidth(Width::TwoExtraLarge);
+
+        $table->filtersLayout(FiltersLayout::Modal);
+
+        return $table;
+
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ManageAudits::route('/'),
+        ];
+    }
+
+    /**
+     * @return array<Action|ActionGroup>
+     */
+    protected static function getTableActions(): array
+    {
+        return [
+            RestoreAuditAction::make(),
+            ActionGroup::make([
+                ViewAuditAction::make(),
+                ViewAuditableAction::make(),
+                ViewUserAction::make(),
+            ]),
+        ];
+    }
+
+    /**
+     * @return Column[]
+     */
+    protected static function getTableColumns(): array
+    {
+        return [
+            TextColumn::make('id')
+                ->label(__('filament-auditing::resource.fields.id'))
+                ->sortable(),
+            TextColumn::make('created_at')
+                ->label(__('filament-auditing::resource.fields.created_at_since'))
+                ->dateTimeTooltip()
+                ->since(),
+            TextColumn::make('user.email')
+                ->label(__('filament-auditing::resource.fields.user.label'))
+                ->tooltip(fn (Audit $record, GetUser $getUser): ?string => $getUser($record)?->getKey())
+                ->url(fn (Audit $record, GetUser $getUser): ?string => $getUser->url($record))
+                ->hiddenOn(OwnedAuditsRelationManager::class),
+            TextColumn::make('auditable_type')
+                ->label(__('filament-auditing::resource.fields.auditable_type'))
+                ->formatStateUsing(fn (string $state, FormatAuditableType $format): ?string => $format($state))
+                ->tooltip(fn (Audit $record, GetAuditable $getAuditable): ?string => $getAuditable($record)?->getKey())
+                ->url(fn (Audit $record, GetAuditable $getAuditable): ?string => $getAuditable->url($record))
+                ->hiddenOn(AuditsRelationManager::class),
+            TextColumn::make('event')
+                ->label(__('filament-auditing::resource.fields.event'))
+                ->visibleFrom('md')
+                ->formatStateUsing(fn (string $state, FormatEvent $format): ?string => $format($state)),
+            TextColumn::make('fields')
+                ->label(__('filament-auditing::resource.fields.audited_fields'))
+                ->extraAttributes(['class' => 'font-mono'])
+                ->visibleFrom('md')
+                ->getStateUsing(function (Audit $record) {
+                    return array_keys($record->new_values);
+                }),
+        ];
+    }
+
+    /**
+     * @return BaseFilter[]
+     *
+     * @throws Exception
+     */
+    protected static function getTableFilters(): array
+    {
+        $getAuditableTypeSearchResults = function (FormatAuditableType $format, string $search = ''): array {
+            $model = FilamentAuditingPlugin::get()->getModel();
+            $results = $model::query()
+                ->when($search, function (Builder $query, string $search): void {
+                    $query->whereLike('auditable_type', '%' . $search . '%');
+                })
+                ->distinct()
+                ->pluck('auditable_type'); // @phpstan-ignore argument.type
+
+            return $results->mapWithKeys(function (string $item) use ($format): array {
+                return [$item => $format($item)];
+            })->toArray();
+        };
+
+        $getAuditableOptionLabel = function (?string $value, FormatAuditableType $format): ?string {
+            return $format($value ?? '');
+        };
+
+        $getEventOptions = function (Repository $config, FormatEvent $format): array {
+            $events = $config->array('audit.events');
+            $mapEvent = fn (string $item): array => [$item => $format($item)];
+
+            return Arr::mapWithKeys($events, $mapEvent);
+        };
+
+        return [
+            QueryBuilder::make('audit_query')
+                ->label(__('filament-auditing::resource.fields.query'))
+                ->constraints([
+                    AuditUserConstraint::make('user')
+                        ->selectable(
+                            AuditUserOperator::make()
+                                ->titleAttribute('email')
+                                ->types(FilamentAuditingPlugin::get()->getUsers())
+                        ),
+                    SelectConstraint::make('auditable_type')
+                        ->label(__('filament-auditing::resource.fields.auditable_type'))
+                        ->searchable()
+                        ->options($getAuditableTypeSearchResults)
+                        ->getOptionLabelUsing($getAuditableOptionLabel)
+                        ->getSearchResultsUsing($getAuditableTypeSearchResults)
+                        ->optionsLimit(7),
+                    SelectConstraint::make('event')
+                        ->label(__('filament-auditing::resource.fields.event'))
+                        ->options($getEventOptions),
+                    DateConstraint::make('created_at')
+                        ->label(__('filament-auditing::resource.fields.created_at')),
+                ]),
+        ];
+    }
+}
