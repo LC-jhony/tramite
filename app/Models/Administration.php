@@ -48,6 +48,13 @@ class Administration extends Model implements AuditableContract
         'status',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'status' => 'integer',
+        ];
+    }
+
     public function documents(): HasMany
     {
         return $this->hasMany(Document::class, 'gestion_id');

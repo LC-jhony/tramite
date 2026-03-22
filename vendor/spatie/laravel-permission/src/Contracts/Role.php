@@ -2,8 +2,8 @@
 
 namespace Spatie\Permission\Contracts;
 
+use BackedEnum;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Spatie\Permission\Exceptions\RoleDoesNotExist;
 
 /**
  * @property int|string $id
@@ -25,7 +25,7 @@ interface Role
      * Find a role by its name and guard name.
      *
      *
-     * @throws RoleDoesNotExist
+     * @throws \Spatie\Permission\Exceptions\RoleDoesNotExist
      */
     public static function findByName(string $name, ?string $guardName): self;
 
@@ -33,7 +33,7 @@ interface Role
      * Find a role by its id and guard name.
      *
      *
-     * @throws RoleDoesNotExist
+     * @throws \Spatie\Permission\Exceptions\RoleDoesNotExist
      */
     public static function findById(int|string $id, ?string $guardName): self;
 
@@ -44,8 +44,6 @@ interface Role
 
     /**
      * Determine if the user may perform the given permission.
-     *
-     * @param  string|int|Permission|\BackedEnum  $permission
      */
-    public function hasPermissionTo($permission, ?string $guardName): bool;
+    public function hasPermissionTo(string|int|Permission|BackedEnum $permission, ?string $guardName = null): bool;
 }

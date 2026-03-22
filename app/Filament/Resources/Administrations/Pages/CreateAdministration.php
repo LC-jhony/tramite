@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Administrations\Pages;
 
 use App\Filament\Resources\Administrations\AdministrationResource;
+use App\Models\Administration;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateAdministration extends CreateRecord

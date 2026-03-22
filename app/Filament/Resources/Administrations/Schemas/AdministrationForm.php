@@ -13,15 +13,39 @@ class AdministrationForm
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->required(),
+                    ->label('Nombre')
+                    ->required()
+                    ->disabled()
+                    ->dehydrated(),
                 TextInput::make('start_period')
-                    ->required(),
+                    ->label('Periodo Inicio')
+                    ->required()
+                    ->numeric()
+                    ->minLength(4)
+                    ->maxLength(4)
+                    ->live()
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        if ($state && is_numeric($state)) {
+                            $endYear = (int) $state + 3;
+                            $set('end_period', (string) $endYear);
+                            $set('name', 'Gestión Municipal: '.$state.' - '.$endYear);
+                        }
+                    }),
                 TextInput::make('end_period')
-                    ->required(),
+                    ->label('Periodo Fin')
+                    ->required()
+                    ->numeric()
+                    ->minLength(4)
+                    ->maxLength(4)
+                    ->disabled()
+                    ->dehydrated(),
                 TextInput::make('mayor')
+                    ->label('Alcalde')
                     ->required(),
                 Toggle::make('status')
-                    ->required(),
+                    ->label('Estado')
+                    ->required()
+                    ->default(false),
             ]);
     }
 }
