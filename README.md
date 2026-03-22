@@ -1,59 +1,173 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Tramita YA
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistema de gestion de tramites documentarios desarrollado con Laravel 12 y Filament v5.
 
-## About Laravel
+## Caracteristicas
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Gestion de Documentos**: Registro, seguimiento y derivation de documentos
+- **Flujo de Trabajo**: Estados de documento (Registrado, En Proceso, Respondido, Finalizado, Rechazado, Cancelado)
+- **Multi-Oficina**: Derivacion de documentos entre oficinas
+- **Usuarios y Roles**: Sistema de autenticacion con FilamentShield
+- **Auditoria**: Registro de cambios con Laravel Auditing
+- **Copias de Seguridad**: Respaldos automaticos con FilamentSpatieLaravelBackup
+- **Panel de Usuario**: Portal self-service para registro de documentos
+- **Panel de Administracion**: Gestion completa del sistema
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requisitos
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.2+
+- Composer
+- Node.js 18+
+- MySQL 8.0+ / SQLite / PostgreSQL
 
-## Learning Laravel
+## Instalacion
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+```bash
+# Clonar repositorio
+git clone https://github.com/LC-jhony/tramite.git
+cd tramite
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+# Instalar dependencias PHP
+composer install
 
-## Laravel Sponsors
+# Instalar dependencias JS
+npm install
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Copiar archivo de configuracion
+cp .env.example .env
 
-### Premium Partners
+# Generar clave de aplicacion
+php artisan key:generate
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+# Ejecutar migraciones
+php artisan migrate
 
-## Contributing
+# Crear usuario administrador
+php artisan make:filament-user
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Compilar assets
+npm run build
+```
 
-## Code of Conduct
+## Configuracion
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Variables de Entorno
 
-## Security Vulnerabilities
+```env
+APP_NAME="Tramita YA"
+APP_URL=http://localhost
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=tramite
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-## License
+### Paneles Disponibles
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- **Panel de Usuario**: `http://localhost/user`
+- **Panel de Administracion**: `http://localhost/admin`
+
+## Estructura de la Aplicacion
+
+```
+app/
+├── Enum/                    # Enums del sistema
+│   └── DocumentStatus.php   # Estados de documento
+├── Filament/
+│   ├── Resources/           # Recursos admin
+│   │   ├── Administrations/
+│   │   ├── Customers/
+│   │   ├── DocumentTypes/
+│   │   ├── Documents/
+│   │   ├── Offices/
+│   │   ├── Priorities/
+│   │   └── Users/
+│   └── User/
+│       ├── Resources/      # Recursos usuario
+│       │   └── Documents/
+│       └── Pages/          # Paginas personalizadas
+├── Models/
+│   ├── Administration.php   # Gestion/Periodo
+│   ├── Customer.php         # Clientes
+│   ├── Document.php         # Documentos
+│   ├── DocumentFile.php     # Archivos adjuntos
+│   ├── DocumentReception.php # Recepciones
+│   ├── DocumentType.php     # Tipos de documento
+│   ├── Movement.php         # Movimientos/Derivaciones
+│   ├── Office.php           # Oficinas
+│   ├── Priority.php         # Prioridades
+│   └── User.php             # Usuarios
+└── Trait/
+    ├── HasForwardAction.php   # Accion derivar
+    ├── HasReceiveAction.php  # Accion recibir
+    └── HasRejectAction.php    # Accion rechazar
+```
+
+## Modelos y Relaciones
+
+| Modelo | Descripcion |
+|--------|-------------|
+| **Document** | Documentos del sistema con numero, expediente, asunto |
+| **DocumentType** | Tipos de documento (Oficio, Carta, Memorando, etc.) |
+| **Customer** | Clientes/Remitentes (personas o empresas) |
+| **Office** | Oficinas que reciben y derivan documentos |
+| **Administration** | Gestion/Periodo administrativo |
+| **Priority** | Prioridades (Urgente, Normal, Diferido) |
+| **Movement** | Movimientos de derivacion entre oficinas |
+| **DocumentReception** | Registro de recepciones |
+| **DocumentFile** | Archivos adjuntos a documentos |
+| **User** | Usuarios del sistema |
+
+## Estados de Documento
+
+```
+Registrado → En Proceso → Respondido → Finalizado
+                ↓
+           Rechazado / Cancelado
+```
+
+## Comandos Utiles
+
+```bash
+# Desarrollo
+php artisan serve              # Servidor de desarrollo
+npm run dev                    # Vite hot reload
+composer run dev               # Dev completo (serve + queue + pail + vite)
+
+# Testing
+composer test                  # Ejecutar pruebas
+php artisan test --compact     # Salida compacta
+
+# Linting
+vendor/bin/pint --dirty       # Formatear archivos modificados
+
+# Base de datos
+php artisan migrate            # Migrar
+php artisan migrate:fresh      # Migrar desde cero
+php artisan db:seed           # Sembrar datos
+```
+
+## Plugins Instalados
+
+| Plugin | Proposito |
+|--------|-----------|
+| **Filament v5** | Admin panel framework |
+| **FilamentShield** | Control de acceso basado en roles |
+| **FilamentAuditing** | Auditoria de cambios |
+| **FilamentSpatieLaravelBackup** | Respaldos de base de datos |
+| **FilamentMediaAction** | Visualizacion de archivos PDF |
+| **AsmitFilamentUpload** | Carga de archivos |
+
+## Seguridad
+
+- Autenticacion via Laravel Sanctum
+- Verificacion de email
+- Politicas de autorizacion por rol
+- Auditoria de cambios en modelos
+
+## Licencia
+
+MIT License
