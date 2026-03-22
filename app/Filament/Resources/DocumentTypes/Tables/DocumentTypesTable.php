@@ -67,7 +67,9 @@ class DocumentTypesTable
             ->emptyStateHeading('No hay tipos de documento')
             ->emptyStateDescription('Crea el primer tipo de documento para comenzar.')
             ->emptyStateIcon('heroicon-o-document-text')
-            ->paginationPageOptions([5])
-            ->striped();
+            ->striped()
+            ->paginated([5, 10, 25, 50, 100, 'all'])
+            ->defaultPaginationPageOption(5)
+            ->defaultSort('created_at', 'desc');
     }
 }

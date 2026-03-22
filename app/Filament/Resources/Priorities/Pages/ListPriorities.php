@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Priorities\Pages;
 use App\Filament\Resources\Priorities\PriorityResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Icons\Heroicon;
 
 class ListPriorities extends ListRecords
 {
@@ -13,7 +14,8 @@ class ListPriorities extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+                ->icon(Heroicon::SquaresPlus),
         ];
     }
 }

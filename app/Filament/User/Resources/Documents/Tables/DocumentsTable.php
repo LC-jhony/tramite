@@ -115,7 +115,9 @@ class DocumentsTable
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->paginationPageOptions([5])
-            ->striped();
+            ->striped()
+            ->paginated([5, 10, 25, 50, 100, 'all'])
+            ->defaultPaginationPageOption(5)
+            ->defaultSort('created_at', 'desc');
     }
 }

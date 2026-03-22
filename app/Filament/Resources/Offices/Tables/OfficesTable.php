@@ -58,7 +58,9 @@ class OfficesTable
             ->emptyStateHeading('No hay oficinas')
             ->emptyStateDescription('Crea la primera oficina para comenzar.')
             ->emptyStateIcon('heroicon-o-building-office')
-            ->paginationPageOptions([5])
-            ->striped();
+            ->striped()
+            ->paginated([5, 10, 25, 50, 100, 'all'])
+            ->defaultPaginationPageOption(5)
+            ->defaultSort('created_at', 'desc');
     }
 }

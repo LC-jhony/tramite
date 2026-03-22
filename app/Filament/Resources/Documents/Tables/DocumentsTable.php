@@ -155,8 +155,9 @@ class DocumentsTable
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->defaultSort('reception_date', 'desc')
-            ->paginationPageOptions([10, 25, 50])
-            ->striped();
+            ->striped()
+            ->paginated([5, 10, 25, 50, 100, 'all'])
+            ->defaultPaginationPageOption(5)
+            ->defaultSort('reception_date', 'desc');
     }
 }
