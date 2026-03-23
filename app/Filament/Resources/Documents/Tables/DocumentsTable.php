@@ -20,6 +20,8 @@ class DocumentsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->heading('Documentos')
+            ->description('Gestiona los documentos del sistema.')
             ->columns([
                 TextColumn::make('document_number')
                     ->label('Nro. Documento')
@@ -45,7 +47,7 @@ class DocumentsTable
                     ->label('Origen')
                     ->searchable()
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'interno' => 'info',
                         'externo' => 'warning',
                         default => 'gray',
@@ -64,7 +66,7 @@ class DocumentsTable
                 //     ->date('d/m/Y')
                 //     ->sortable()
                 //     ->badge(),
-                //->color(fn ($record): string => $record->response_deadline && $record->response_deadline->isPast() && ! $record->isClosed() ? 'danger' : 'gray'),
+                // ->color(fn ($record): string => $record->response_deadline && $record->response_deadline->isPast() && ! $record->isClosed() ? 'danger' : 'gray'),
                 TextColumn::make('folio')
                     ->label('Folio')
                     ->searchable()
@@ -73,7 +75,7 @@ class DocumentsTable
                 TextColumn::make('status')
                     ->label('Estado')
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'registrado' => 'info',
                         'en_proceso' => 'primary',
                         'derivado' => 'warning',
@@ -140,8 +142,8 @@ class DocumentsTable
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
-                            ->when($data['from'], fn($q, $v) => $q->whereDate('reception_date', '>=', $v))
-                            ->when($data['until'], fn($q, $v) => $q->whereDate('reception_date', '<=', $v));
+                            ->when($data['from'], fn ($q, $v) => $q->whereDate('reception_date', '>=', $v))
+                            ->when($data['until'], fn ($q, $v) => $q->whereDate('reception_date', '<=', $v));
                     })
                     ->columns(2),
             ])
@@ -155,6 +157,9 @@ class DocumentsTable
                     DeleteBulkAction::make(),
                 ]),
             ])
+            ->emptyStateHeading('No hay documentos')
+            ->emptyStateDescription('Registra el primer documento para comenzar.')
+            ->emptyStateIcon(Heroicon::DocumentArrowDown)
             ->striped()
             ->paginated([5, 10, 25, 50, 100, 'all'])
             ->defaultPaginationPageOption(5)
