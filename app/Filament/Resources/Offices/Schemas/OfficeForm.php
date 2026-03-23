@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Offices\Schemas;
 
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -44,19 +45,9 @@ class OfficeForm
                 ->icon(Heroicon::ChartBar)
                 ->description('Active o inactive esta oficina')
                 ->schema([
-                    ToggleButtons::make('status')
+                    Toggle::make('status')
                         ->label('Estado')
-                        ->boolean()
-                        ->inline()
-                        ->required()
-                        ->icons([
-                            true => Heroicon::CheckCircle,
-                            false => Heroicon::XCircle,
-                        ])
-                        ->colors([
-                            true => 'success',
-                            false => 'danger',
-                        ]),
+                        ->required(),
                 ])
                 ->collapsible(),
         ];
