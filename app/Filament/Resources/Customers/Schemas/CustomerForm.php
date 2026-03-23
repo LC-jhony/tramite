@@ -47,8 +47,8 @@ class CustomerForm
             Section::make('Datos de Persona Natural')
                 ->icon(Heroicon::User)
                 ->description('Complete la información personal del cliente')
-                ->hidden(fn (callable $get): bool => $get('representation') !== 'natural')
-                ->columns(3)
+                ->hidden(fn(callable $get): bool => $get('representation') !== 'natural')
+                ->columns(2)
                 ->schema([
                     TextInput::make('dni')
                         ->label('DNI')
@@ -63,8 +63,7 @@ class CustomerForm
                         ->label('Nombre Completo')
                         ->placeholder('Ingrese sus nombres')
                         ->required()
-                        ->maxLength(255)
-                        ->columnSpanFull(),
+                        ->maxLength(255),
 
                     TextInput::make('last_name')
                         ->label('Apellido Paterno')
@@ -83,7 +82,7 @@ class CustomerForm
             Section::make('Datos de Persona Jurídica')
                 ->icon(Heroicon::BuildingOffice)
                 ->description('Complete la información de la empresa')
-                ->hidden(fn (callable $get): bool => $get('representation') !== 'juridica')
+                ->hidden(fn(callable $get): bool => $get('representation') !== 'juridica')
                 ->columns(2)
                 ->schema([
                     TextInput::make('ruc')
