@@ -7,6 +7,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -47,7 +48,7 @@ class DocumentsTable
                     ->label('Origen')
                     ->searchable()
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'interno' => 'info',
                         'externo' => 'warning',
                         default => 'gray',
@@ -75,7 +76,7 @@ class DocumentsTable
                 TextColumn::make('status')
                     ->label('Estado')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'registrado' => 'info',
                         'en_proceso' => 'primary',
                         'derivado' => 'warning',
@@ -142,8 +143,8 @@ class DocumentsTable
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
-                            ->when($data['from'], fn ($q, $v) => $q->whereDate('reception_date', '>=', $v))
-                            ->when($data['until'], fn ($q, $v) => $q->whereDate('reception_date', '<=', $v));
+                            ->when($data['from'], fn($q, $v) => $q->whereDate('reception_date', '>=', $v))
+                            ->when($data['until'], fn($q, $v) => $q->whereDate('reception_date', '<=', $v));
                     })
                     ->columns(2),
             ])
