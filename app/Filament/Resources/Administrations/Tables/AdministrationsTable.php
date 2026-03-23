@@ -6,9 +6,9 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class AdministrationsTable
@@ -16,6 +16,8 @@ class AdministrationsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->heading('Administraciones')
+            ->description('Gestiona las administraciones del sistema.')
             ->striped()
             ->paginated([5, 10, 25, 50, 100, 'all'])
             ->defaultPaginationPageOption(5)
@@ -25,7 +27,7 @@ class AdministrationsTable
                     ->label('Nombre')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->copyable(),
                 TextColumn::make('start_period')
                     ->label('Período Inicio')
                     ->date()
@@ -40,8 +42,12 @@ class AdministrationsTable
                     ->label('Alcalde')
                     ->searchable()
                     ->toggleable(),
-                ToggleColumn::make('status')
+                TextColumn::make('status')
                     ->label('Estado')
+                    ->badge()
+                    ->icon(fn (bool $state): string => $state ? Heroicon::CheckCircle : Heroicon::XCircle)
+                    ->color(fn (bool $state): string => $state ? 'success' : 'danger')
+                    ->formatStateUsing(fn (bool $state): string => $state ? 'Activo' : 'Inactivo')
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label('Creado')
@@ -55,7 +61,12 @@ class AdministrationsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->label('Estado')
+                    ->options([
+                        1 => 'Activo',
+                        0 => 'Inactivo',
+                    ]),
             ])
             ->recordActions([
                 EditAction::make(),
@@ -68,6 +79,6 @@ class AdministrationsTable
             ])
             ->emptyStateHeading('No hay administraciones')
             ->emptyStateDescription('Crea la primera administración para comenzar.')
-            ->emptyStateIcon('heroicon-o-building-library');
+            ->emptyStateIcon(Heroicon::BuildingLibrary);
     }
 }

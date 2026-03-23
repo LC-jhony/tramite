@@ -5,8 +5,9 @@ namespace App\Filament\Resources\Offices\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class OfficesTable
@@ -29,9 +30,12 @@ class OfficesTable
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
-                IconColumn::make('status')
+                TextColumn::make('status')
                     ->label('Estado')
-                    ->boolean()
+                    ->badge()
+                    ->icon(fn (bool $state): string => $state ? Heroicon::CheckCircle : Heroicon::XCircle)
+                    ->color(fn (bool $state): string => $state ? 'success' : 'danger')
+                    ->formatStateUsing(fn (bool $state): string => $state ? 'Activo' : 'Inactivo')
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label('Creado')
@@ -45,7 +49,12 @@ class OfficesTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->label('Estado')
+                    ->options([
+                        1 => 'Activo',
+                        0 => 'Inactivo',
+                    ]),
             ])
             ->recordActions([
                 EditAction::make(),
@@ -57,7 +66,7 @@ class OfficesTable
             ])
             ->emptyStateHeading('No hay oficinas')
             ->emptyStateDescription('Crea la primera oficina para comenzar.')
-            ->emptyStateIcon('heroicon-o-building-office')
+            ->emptyStateIcon(Heroicon::BuildingOffice)
             ->striped()
             ->paginated([5, 10, 25, 50, 100, 'all'])
             ->defaultPaginationPageOption(5)
