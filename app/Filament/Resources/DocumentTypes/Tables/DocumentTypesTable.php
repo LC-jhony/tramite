@@ -3,10 +3,12 @@
 namespace App\Filament\Resources\DocumentTypes\Tables;
 
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class DocumentTypesTable
@@ -54,10 +56,24 @@ class DocumentTypesTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('requires_response')
+                    ->label('Requiere Respuesta')
+                    ->options([
+                        1 => 'Sí',
+                        0 => 'No',
+                    ])
+                    ->native(false),
+                SelectFilter::make('status')
+                    ->label('Estado')
+                    ->options([
+                        1 => 'Activo',
+                        0 => 'Inactivo',
+                    ])
+                    ->native(false),
             ])
             ->recordActions([
                 EditAction::make(),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
