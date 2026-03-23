@@ -30,7 +30,7 @@ class PrioritiesTable
                 TextColumn::make('status')
                     ->label('Estado')
                     ->badge()
-                    ->icon(fn (bool $state): string => $state ? Heroicon::CheckCircle->value : Heroicon::XCircle->value)
+                    ->icon(fn (bool $state): string => $state ? 'heroicon-o-check-circle' : 'heroicon-o-x-circle')
                     ->color(fn (bool $state): string => $state ? 'success' : 'danger')
                     ->formatStateUsing(fn (bool $state): string => $state ? 'Activo' : 'Inactivo')
                     ->sortable(),
