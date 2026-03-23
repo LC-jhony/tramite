@@ -3,10 +3,12 @@
 namespace App\Filament\Resources\Customers\Tables;
 
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class CustomersTable
@@ -15,13 +17,14 @@ class CustomersTable
     {
         return $table
             ->columns([
-                IconColumn::make('representation')
-                    ->boolean(),
+                TextColumn::make('representation')
+                    ->label('Representante')
+                    ->badge()
+                    ->icon(fn (bool $state): Heroicon => $state ? Heroicon::User : Heroicon::BuildingOffice)
+                    ->color(fn (bool $state): string => $state ? 'success' : 'warning')
+                    ->formatStateUsing(fn (bool $state): string => $state ? 'Natural' : 'Jurídica')
+                    ->alignCenter(),
                 TextColumn::make('full_name')
-                    ->searchable(),
-                TextColumn::make('first_name')
-                    ->searchable(),
-                TextColumn::make('last_name')
                     ->searchable(),
                 TextColumn::make('dni')
                     ->searchable(),
@@ -29,8 +32,6 @@ class CustomersTable
                     ->searchable(),
                 TextColumn::make('email')
                     ->label('Email address')
-                    ->searchable(),
-                TextColumn::make('address')
                     ->searchable(),
                 TextColumn::make('ruc')
                     ->searchable(),
@@ -50,10 +51,17 @@ class CustomersTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('representation')
+                    ->label('Representante')
+                    ->options([
+                        1 => 'Natural',
+                        0 => 'Jurídica',
+                    ])
+                    ->native(false),
             ])
             ->recordActions([
                 EditAction::make(),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
