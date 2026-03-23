@@ -106,14 +106,14 @@ class DocumentsTable
                         'rechazado' => 'Rechazado',
                     ])
                     ->multiple(),
-                SelectFilter::make('condition')
-                    ->label('Condición')
-                    ->options([
-                        'urgente' => 'Urgente',
-                        'pendiente' => 'Pendiente',
-                        'atrasado' => 'Atrasado',
-                    ])
-                    ->multiple(),
+                // SelectFilter::make('condition')
+                //     ->label('Condición')
+                //     ->options([
+                //         'urgente' => 'Urgente',
+                //         'pendiente' => 'Pendiente',
+                //         'atrasado' => 'Atrasado',
+                //     ])
+                //     ->multiple(),
                 SelectFilter::make('document_type_id')
                     ->label('Tipo de Documento')
                     ->relationship('type', 'name')
