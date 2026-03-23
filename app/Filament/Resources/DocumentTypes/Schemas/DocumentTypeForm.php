@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\DocumentTypes\Schemas;
 
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -52,20 +53,9 @@ class DocumentTypeForm
                 ->icon(Heroicon::Clock)
                 ->description('Configure si este tipo de documento requiere respuesta')
                 ->schema([
-                    ToggleButtons::make('requires_response')
+                    Toggle::make('requires_response')
                         ->label('Requiere respuesta')
-                        ->boolean()
                         ->default(true)
-                        ->inline()
-                        ->required()
-                        ->icons([
-                            true => Heroicon::CheckCircle,
-                            false => Heroicon::XCircle,
-                        ])
-                        ->colors([
-                            true => 'success',
-                            false => 'warning',
-                        ]),
                 ])
                 ->collapsible(),
 
@@ -73,20 +63,8 @@ class DocumentTypeForm
                 ->icon(Heroicon::ChartBar)
                 ->description('Active o inactive este tipo de documento')
                 ->schema([
-                    ToggleButtons::make('status')
+                    Toggle::make('status')
                         ->label('Estado')
-                        ->boolean()
-                        ->default(true)
-                        ->inline()
-                        ->required()
-                        ->icons([
-                            true => Heroicon::Check,
-                            false => Heroicon::XMark,
-                        ])
-                        ->colors([
-                            true => 'success',
-                            false => 'danger',
-                        ]),
                 ])
                 ->collapsible(),
         ];
