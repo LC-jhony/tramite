@@ -22,7 +22,8 @@ class DocumentTypeForm
             Section::make('Información del Tipo de Documento')
                 ->icon(Heroicon::DocumentText)
                 ->description('Ingrese los datos principales del tipo de documento')
-                ->columns(2)
+                ->columns(3)
+                ->columnSpanFull()
                 ->schema([
                     TextInput::make('code')
                         ->label('Código')
@@ -37,6 +38,13 @@ class DocumentTypeForm
                         ->required()
                         ->maxLength(255)
                         ->columnSpan(1),
+                    TextInput::make('response_days')
+                        ->label('Días de respuesta')
+                        ->placeholder('Número de días')
+                        ->numeric()
+                        ->minValue(1)
+                        ->maxValue(365)
+                        ->suffix('días'),
                 ])
                 ->collapsible(),
 
@@ -47,6 +55,7 @@ class DocumentTypeForm
                     ToggleButtons::make('requires_response')
                         ->label('Requiere respuesta')
                         ->boolean()
+                        ->default(true)
                         ->inline()
                         ->required()
                         ->icons([
@@ -60,21 +69,6 @@ class DocumentTypeForm
                 ])
                 ->collapsible(),
 
-            Section::make('Plazo de Respuesta')
-                ->icon(Heroicon::CalendarDays)
-                ->description('Días hábiles para responder este documento')
-                ->hidden(fn (callable $get): bool => ! $get('requires_response'))
-                ->schema([
-                    TextInput::make('response_days')
-                        ->label('Días de respuesta')
-                        ->placeholder('Número de días')
-                        ->numeric()
-                        ->minValue(1)
-                        ->maxValue(365)
-                        ->suffix('días'),
-                ])
-                ->collapsible(),
-
             Section::make('Estado')
                 ->icon(Heroicon::ChartBar)
                 ->description('Active o inactive este tipo de documento')
@@ -82,6 +76,7 @@ class DocumentTypeForm
                     ToggleButtons::make('status')
                         ->label('Estado')
                         ->boolean()
+                        ->default(true)
                         ->inline()
                         ->required()
                         ->icons([
