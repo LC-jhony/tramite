@@ -17,6 +17,7 @@ use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Models\Audit;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @property int $id
@@ -56,7 +57,7 @@ use OwenIt\Auditing\Models\Audit;
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.

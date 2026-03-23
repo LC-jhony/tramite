@@ -15,36 +15,47 @@ class UserForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+
             ->components([
-                TextInput::make('name')
-                    ->label('Nombre')
-                    ->required(),
-                TextInput::make('email')
-                    ->label('Correo electronico')
-                    ->label('Email address')
-                    ->email()
-                    ->required(),
-                // DateTimePicker::make('email_verified_at'),
-                TextInput::make('password')
-                    ->password()
-                    ->revealable()
-                    ->dehydrated(fn($state): bool => filled($state))
-                    ->required(fn(string $operation): bool => $operation === 'create')
-                    ->visible(fn(string $operation): bool => $operation === 'create'),
-                TextInput::make('password_confirmation')
-                    ->password()
-                    ->revealable()
-                    ->dehydrated(false)
-                    ->required(fn(string $operation): bool => $operation === 'create')
-                    ->same('password')
-                    ->visible(fn(string $operation): bool => $operation === 'create'),
-                Select::make('office_id')
-                    ->label('Oficina')
-                    ->options(Office::where('status', true)->pluck('name', 'id'))
-                    ->searchable()
-                    ->preload()
-                    ->default(null)
-                    ->native(false),
+                Section::make('Registrar usuario')
+                    ->columns(2)
+                    ->columnSpanFull()
+                    ->schema([
+                        TextInput::make('name')
+                            ->label('Nombre')
+                            ->required(),
+                        TextInput::make('email')
+                            ->label('Correo electronico')
+                            ->label('Email address')
+                            ->email()
+                            ->required(),
+                        TextInput::make('password')
+                            ->password()
+                            ->revealable()
+                            ->dehydrated(fn($state): bool => filled($state))
+                            ->required(fn(string $operation): bool => $operation === 'create')
+                            ->visible(fn(string $operation): bool => $operation === 'create'),
+                        TextInput::make('password_confirmation')
+                            ->password()
+                            ->revealable()
+                            ->dehydrated(false)
+                            ->required(fn(string $operation): bool => $operation === 'create')
+                            ->same('password')
+                            ->visible(fn(string $operation): bool => $operation === 'create'),
+                        Select::make('roles')
+                            ->relationship('roles', 'name')
+                            ->multiple()
+                            ->preload()
+                            ->searchable(),
+                        Select::make('office_id')
+                            ->label('Oficina')
+                            ->options(Office::where('status', true)->pluck('name', 'id'))
+                            ->searchable()
+                            ->preload()
+                            ->default(null)
+                            ->native(false),
+                    ]),
+
                 Fieldset::make('Contraseña')
                     ->columnSpanFull()
                     ->schema([

@@ -11,7 +11,6 @@ use Filament\Actions\EditAction;
 use Filament\Auth\Notifications\VerifyEmail;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TogglesFilter;
@@ -34,13 +33,15 @@ class UsersTable
                     ->label('Correo electrónico')
                     ->searchable()
                     ->copyable(),
-                TextColumn::make('email_verified_at')
-                    ->label('Verificado')
-                    ->dateTime()
-                    ->sortable()
-                    ->badge()
-                    ->color(fn ($state): string => $state ? 'success' : 'warning')
-                    ->formatStateUsing(fn ($state): string => $state ? 'Verificado' : 'Pendiente'),
+                TextColumn::make('roles.name')
+                    ->badge(),
+                // TextColumn::make('email_verified_at')
+                //     ->label('Verificado')
+                //     ->dateTime()
+                //     ->sortable()
+                //     ->badge()
+                //     ->color(fn($state): string => $state ? 'success' : 'warning')
+                //     ->formatStateUsing(fn($state): string => $state ? 'Verificado' : 'Pendiente'),
                 TextColumn::make('created_at')
                     ->label('Creado')
                     ->dateTime()
@@ -61,32 +62,32 @@ class UsersTable
                 SelectFilter::make('office')
                     ->label('Oficina')
                     ->relationship('office', 'name'),
-                TogglesFilter::make('email_verified_at')
-                    ->label('Verificado')
-                    ->filter(function ($query, $verified) {
-                        if ($verified) {
-                            return $query->whereNotNull('email_verified_at');
-                        }
+                // TogglesFilter::make('email_verified_at')
+                //     ->label('Verificado')
+                //     ->filter(function ($query, $verified) {
+                //         if ($verified) {
+                //             return $query->whereNotNull('email_verified_at');
+                //         }
 
-                        return $query->whereNull('email_verified_at');
-                    }),
+                //         return $query->whereNull('email_verified_at');
+                //     }),
             ])
             ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
-                Action::make('resend_verification_email')
-                    ->label('Reenviar correo de verificación')
-                    ->icon(Heroicon::Envelope)
-                    ->action(function (User $record) {
-                        $notication = new VerifyEmail;
-                        $notication->url = filament()->getVerifyEmailUrl($record);
-                        $record->notify($notication);
+                // Action::make('resend_verification_email')
+                //     ->label('Reenviar correo de verificación')
+                //     ->icon(Heroicon::Envelope)
+                //     ->action(function (User $record) {
+                //         $notication = new VerifyEmail;
+                //         $notication->url = filament()->getVerifyEmailUrl($record);
+                //         $record->notify($notication);
 
-                        Notification::make()
-                            ->title('Verification email has been reset')
-                            ->send();
-                    })
-                    ->requiresConfirmation(),
+                //         Notification::make()
+                //             ->title('Verification email has been reset')
+                //             ->send();
+                //     })
+                //     ->requiresConfirmation(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
