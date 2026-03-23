@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Priorities\Schemas;
 
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -24,6 +25,7 @@ class PriorityForm
                 ->icon(Heroicon::Flag)
                 ->description('Ingrese los datos de la prioridad')
                 ->columns(2)
+                ->columnSpanFull()
                 ->schema([
                     TextInput::make('name')
                         ->label('Nombre')
@@ -58,19 +60,8 @@ class PriorityForm
                 ->icon(Heroicon::ChartBar)
                 ->description('Active o inactive esta prioridad')
                 ->schema([
-                    ToggleButtons::make('status')
-                        ->label('Estado')
-                        ->boolean()
-                        ->inline()
-                        ->required()
-                        ->icons([
-                            true => Heroicon::CheckCircle,
-                            false => Heroicon::XCircle,
-                        ])
-                        ->colors([
-                            true => 'success',
-                            false => 'danger',
-                        ]),
+                    Toggle::make('status')
+                        ->label('Estado'),
                 ])
                 ->collapsible(),
         ];
