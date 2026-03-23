@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -26,14 +26,14 @@ class BackupPermissionSeeder extends Seeder
         }
 
         // Assign to a role (optional)
-        $role = Role::firstOrCreate(['name' => 'backup']);
+        $role = Role::firstOrCreate(['name' => 'super_admin']);
         $role->givePermissionTo($permissions);
 
         // Assign role to a user (optional)
-        $user = \App\Models\User::find(1); // Change ID as needed
+        $user = User::find(1);
 
-        if ($user && !$user->hasRole('backup')) {
-            $user->assignRole('backup');
+        if ($user && $role) {
+            $user->assignRole($role);
         }
     }
 }

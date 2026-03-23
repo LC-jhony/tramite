@@ -6,7 +6,6 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -20,7 +19,7 @@ class CustomersTable
                 TextColumn::make('representation')
                     ->label('Representante')
                     ->badge()
-                    ->icon(fn (bool $state): Heroicon => $state ? Heroicon::User : Heroicon::BuildingOffice)
+                    ->icon(fn (bool $state): string => $state ? 'heroicon-o-user' : 'heroicon-o-building-office')
                     ->color(fn (bool $state): string => $state ? 'success' : 'warning')
                     ->formatStateUsing(fn (bool $state): string => $state ? 'Natural' : 'Jurídica')
                     ->alignCenter(),
