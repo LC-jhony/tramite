@@ -45,7 +45,7 @@ class AdministrationsTable
                 TextColumn::make('status')
                     ->label('Estado')
                     ->badge()
-                    ->icon(fn (bool $state): string => $state ? Heroicon::CheckCircle : Heroicon::XCircle)
+                    ->icon(fn (bool $state): string => $state ? Heroicon::CheckCircle->value : Heroicon::XCircle->value)
                     ->color(fn (bool $state): string => $state ? 'success' : 'danger')
                     ->formatStateUsing(fn (bool $state): string => $state ? 'Activo' : 'Inactivo')
                     ->sortable(),
