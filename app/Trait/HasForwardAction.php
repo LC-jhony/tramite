@@ -9,6 +9,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
@@ -29,10 +30,10 @@ trait HasForwardAction
             //     fn(Document $record): bool => $record->wasReceived() && ! $record->isClosed()
             // )
             ->disabled(
-                fn(Document $record): bool => $record->wasDerivedBy(auth()->id()) ||
+                fn (Document $record): bool => $record->wasDerivedBy(auth()->id()) ||
                     $record->hasActionByCurrentUser()
             )
-            ->action(fn(Document $record, array $data) => self::forwardAction($record, $data))
+            ->action(fn (Document $record, array $data) => self::forwardAction($record, $data))
             ->successNotificationTitle('Documento derivado correctamente');
     }
 
@@ -42,7 +43,7 @@ trait HasForwardAction
             Select::make('from_office_id')
                 ->label('Oficina de Origen')
                 ->options(self::getActiveOffices())
-                ->default(fn() => Auth::user()?->office_id)
+                ->default(fn () => Auth::user()?->office_id)
                 ->disabled()
                 ->dehydrated()
                 ->required(),
@@ -70,7 +71,7 @@ trait HasForwardAction
         ];
     }
 
-    public static function getActiveOffices(): \Illuminate\Support\Collection
+    public static function getActiveOffices(): Collection
     {
         return Office::where('status', true)->pluck('name', 'id');
     }
@@ -92,7 +93,10 @@ trait HasForwardAction
                 'respondido' => DocumentStatus::Respondido,
             };
 
-            $record->update(['status' => $status->value]);
+            $record->update([
+                'status' => $status->value,
+                'current_office_id' => $data['to_office_id'],
+            ]);
         });
     }
 

@@ -12,8 +12,8 @@ use BackedEnum;
 use CrescentPurchasing\FilamentAuditing\Filament\RelationManagers\AuditsRelationManager;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class DocumentResource extends Resource
 {
@@ -47,5 +47,11 @@ class DocumentResource extends Resource
             'create' => CreateDocument::route('/create'),
             'edit' => EditDocument::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->with(['type', 'customer', 'currentOffice', 'administration', 'priority', 'user']);
     }
 }
