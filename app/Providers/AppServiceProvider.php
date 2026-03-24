@@ -36,8 +36,8 @@ class AppServiceProvider extends ServiceProvider
                     'user' => 'Trámites',
                 ])
                 ->icons([
-                    'admin' => 'heroicon-o-cog-6-tooth',
-                    'user' => 'heroicon-o-document-duplicate',
+                    'admin' => 'heroicon-o-square-2-stack',
+                    'user' => 'heroicon-o-star',
                 ])
                 ->iconSize(20)
                 ->modalHeading('Cambiar de Panel')
