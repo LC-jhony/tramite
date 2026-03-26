@@ -2,6 +2,11 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\User\Widgets\DocumentWidget;
+use App\Filament\User\Widgets\MovementsByActionWidget;
+use App\Filament\User\Widgets\MovementWidget;
+use App\Filament\User\Widgets\RecentDocumentsWidget;
+use App\Filament\User\Widgets\UserStatsWidget;
 use App\Livewire\CustomTopNavigation;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -42,21 +47,26 @@ class UserPanelProvider extends PanelProvider
             ->pages([
                 Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/User/Widgets'), for: 'App\Filament\User\Widgets')
             ->widgets([
                 AccountWidget::class,
                 FilamentInfoWidget::class,
+                DocumentWidget::class,
+                MovementWidget::class,
+                MovementsByActionWidget::class,
+                UserStatsWidget::class,
+                RecentDocumentsWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
-                StartSession::class,
-                AuthenticateSession::class,
-                ShareErrorsFromSession::class,
                 VerifyCsrfToken::class,
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                StartSession::class,
+                AuthenticateSession::class,
+                ShareErrorsFromSession::class,
+
             ])
             ->authMiddleware([
                 Authenticate::class,
