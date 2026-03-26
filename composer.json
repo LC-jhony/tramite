@@ -20,6 +20,7 @@
         "hugomyb/filament-media-action": "^5.0",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
+        "laraveldaily/filawidgets": "^0.1.2",
         "owen-it/laravel-auditing": "^14.0",
         "shuvroroy/filament-spatie-laravel-backup": "^3.3"
     },
