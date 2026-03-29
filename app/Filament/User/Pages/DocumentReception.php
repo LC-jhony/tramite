@@ -92,7 +92,7 @@ class DocumentReception extends Page implements HasTable
                         'latestMovement',
                         'latestMovement.toOffice',
                         'latestMovement.fromOffice',
-                        'documentFiles'
+                        'documentFiles',
                     ])
                     ->whereHas('movements', function ($query) use ($officeId) {
                         $query->where('to_office_id', $officeId)
@@ -108,7 +108,7 @@ class DocumentReception extends Page implements HasTable
                     ->label('Remitente')
                     ->searchable()
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         default => 'info',
                     }),
                 TextColumn::make('type.name')
@@ -120,7 +120,7 @@ class DocumentReception extends Page implements HasTable
                     ->label('Derivado a')
                     ->searchable()
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         default => 'info',
                     }),
                 TextColumn::make('reception_date')
@@ -137,7 +137,9 @@ class DocumentReception extends Page implements HasTable
                     ->label('documentos')
                     ->icon('bi-file-pdf')
                     ->color('danger')
-                    ->media(fn($record) => $record->documentFiles->map(fn($f) => asset('storage/' . $f->path))->toArray()),
+                    ->media(fn ($record) => $record->documentFiles->first()?->path
+                        ? asset('storage/'.$record->documentFiles->first()->path)
+                        : null),
             ]);
     }
 

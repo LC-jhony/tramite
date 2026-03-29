@@ -8,6 +8,7 @@ use App\Filament\User\Widgets\MovementWidget;
 use App\Filament\User\Widgets\RecentDocumentsWidget;
 use App\Filament\User\Widgets\UserStatsWidget;
 use App\Livewire\CustomTopNavigation;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use CrescentPurchasing\FilamentAuditing\FilamentAuditingPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -31,7 +32,7 @@ class UserPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->brandName(fn() => auth()->user()?->office?->name ?? config('app.name'))
+            ->brandName(fn () => auth()->user()?->office?->name ?? config('app.name'))
             ->id('user')
             ->path('user')
             ->registration()
@@ -71,9 +72,9 @@ class UserPanelProvider extends PanelProvider
             ])
             ->plugins([
                 // FilamentSpatieLaravelBackupPlugin::make(),
-                // FilamentShieldPlugin::make(),
+                FilamentShieldPlugin::make(),
                 FilamentAuditingPlugin::make()
-                    ->formatAuditableTypeUsing(fn(string $value): string => strtoupper($value))
+                    ->formatAuditableTypeUsing(fn (string $value): string => strtoupper($value))
                     ->navigationGroup('Settings')
                     ->navigationIcon('hugeicons-audit-02'),
             ])

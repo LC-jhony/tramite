@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use OwenIt\Auditing\Models\Audit;
 
 /**
@@ -163,8 +163,9 @@ class Document extends Model implements AuditableContract
             ->where('user_id', auth()->id())
             ->exists();
     }
+
     public function ownedAudits(): MorphMany
     {
-        return $this->morphMany(Audit::class, 'user');
+        return $this->morphMany(Audit::class, 'owner');
     }
 }

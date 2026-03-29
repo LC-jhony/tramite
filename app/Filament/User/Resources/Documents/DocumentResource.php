@@ -9,8 +9,6 @@ use App\Filament\User\Resources\Documents\Schemas\DocumentForm;
 use App\Filament\User\Resources\Documents\Tables\DocumentsTable;
 use App\Models\Document;
 use BackedEnum;
-use CrescentPurchasing\FilamentAuditing\Filament\RelationManagers\AuditsRelationManager;
-use CrescentPurchasing\FilamentAuditing\Filament\RelationManagers\OwnedAuditsRelationManager;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -37,10 +35,7 @@ class DocumentResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            AuditsRelationManager::class,
-            OwnedAuditsRelationManager::class,
-        ];
+        return [];
     }
 
     public static function getPages(): array
