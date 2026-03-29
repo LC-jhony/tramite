@@ -49,7 +49,7 @@ new class extends Component implements HasActions, HasSchemas, HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query($this->document ? Movement::query()->where('document_id', $this->document->id)->with(['fromOffice', 'toOffice', 'user', 'document']) : Movement::query()->whereRaw('1 = 0'))
+            ->query($this->document ? Movement::query()->where('document_id', $this->document->id)->with(['fromOffice', 'toOffice', 'user', 'document'])->latest() : Movement::query()->whereRaw('1 = 0'))
             ->paginated(false)
             ->columns([
                 TextColumn::make('receipt_date')->label('Fecha'),
@@ -81,7 +81,9 @@ new class extends Component implements HasActions, HasSchemas, HasTable
 
         if ($caseNumber) {
             $query->where('case_number', $caseNumber);
-        } elseif ($document) {
+        }
+
+        if ($document) {
             $customerIds = Customer::query()
                 ->where('dni', $document)
                 ->orWhere('ruc', $document)
