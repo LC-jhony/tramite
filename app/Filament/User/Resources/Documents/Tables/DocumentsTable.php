@@ -11,6 +11,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Hugomyb\FilamentMediaAction\Actions\MediaAction;
 use Illuminate\Database\Eloquent\Builder;
 
 class DocumentsTable
@@ -109,6 +110,12 @@ class DocumentsTable
                 self::getForwardAction()
                     ->label('derivar'),
                 EditAction::make(),
+                MediaAction::make('pdf')
+                    ->label('documentos')
+                    ->icon('bi-file-pdf')
+                    ->color('danger')
+                    ->media(fn($record) => $record->documentFiles->map(fn($f) => asset('storage/' . $f->path))->toArray()),
+
             ])
             ->bulkActions([
                 BulkActionGroup::make([

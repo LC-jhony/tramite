@@ -88,7 +88,12 @@ class DocumentReception extends Page implements HasTable
             ->defaultSort('created_at', 'desc')
             ->query(
                 Document::query()
-                    ->with(['latestMovement', 'latestMovement.toOffice', 'latestMovement.fromOffice'])
+                    ->with([
+                        'latestMovement',
+                        'latestMovement.toOffice',
+                        'latestMovement.fromOffice',
+                        'documentFiles'
+                    ])
                     ->whereHas('movements', function ($query) use ($officeId) {
                         $query->where('to_office_id', $officeId)
                             ->where('action', 'derivado');
@@ -103,7 +108,7 @@ class DocumentReception extends Page implements HasTable
                     ->label('Remitente')
                     ->searchable()
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         default => 'info',
                     }),
                 TextColumn::make('type.name')
@@ -115,7 +120,7 @@ class DocumentReception extends Page implements HasTable
                     ->label('Derivado a')
                     ->searchable()
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         default => 'info',
                     }),
                 TextColumn::make('reception_date')
@@ -132,7 +137,7 @@ class DocumentReception extends Page implements HasTable
                     ->label('documentos')
                     ->icon('bi-file-pdf')
                     ->color('danger')
-                    ->media(fn ($record) => $record->file ? asset('storage/'.$record->file) : null),
+                    ->media(fn($record) => $record->documentFiles->map(fn($f) => asset('storage/' . $f->path))->toArray()),
             ]);
     }
 

@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use OwenIt\Auditing\Models\Audit;
 
 /**
  * @property int $id
@@ -160,5 +162,9 @@ class Document extends Model implements AuditableContract
         return $this->movements()
             ->where('user_id', auth()->id())
             ->exists();
+    }
+    public function ownedAudits(): MorphMany
+    {
+        return $this->morphMany(Audit::class, 'user');
     }
 }
