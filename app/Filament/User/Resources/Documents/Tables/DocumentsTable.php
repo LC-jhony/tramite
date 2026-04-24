@@ -2,6 +2,7 @@
 
 namespace App\Filament\User\Resources\Documents\Tables;
 
+use App\Enum\DocumentStatus;
 use App\Trait\HasForwardAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -11,6 +12,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use FinityLabs\FinMail\Actions\SendEmailAction;
 use Hugomyb\FilamentMediaAction\Actions\MediaAction;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -45,13 +47,8 @@ class DocumentsTable
                 TextColumn::make('status')
                     ->label('Estado')
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
-                        'registrado' => 'info',
-                        'en_proceso' => 'warning',
-                        'finalizado' => 'success',
-                        'rechazado', 'cancelado' => 'danger',
-                        default => 'gray',
-                    }),
+                    ->color(fn (string $state): string => DocumentStatus::tryFrom($state)?->getColor() ?? 'gray')
+                    ->icon(fn (string $state): ?string => DocumentStatus::tryFrom($state)?->getIcon()),
                 TextColumn::make('reception_date')
                     ->label('Fecha')
                     ->date()
@@ -87,20 +84,20 @@ class DocumentsTable
                         return $query
                             ->when(
                                 $data['from'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('reception_date', '>=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('reception_date', '>=', $date),
                             )
                             ->when(
                                 $data['until'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('reception_date', '<=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('reception_date', '<=', $date),
                             );
                     })
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
                         if ($data['from'] ?? null) {
-                            $indicators['from'] = 'Desde ' . \Carbon\Carbon::parse($data['from'])->toFormattedDateString();
+                            $indicators['from'] = 'Desde '.Carbon::parse($data['from'])->toFormattedDateString();
                         }
                         if ($data['until'] ?? null) {
-                            $indicators['until'] = 'Hasta ' . \Carbon\Carbon::parse($data['until'])->toFormattedDateString();
+                            $indicators['until'] = 'Hasta '.Carbon::parse($data['until'])->toFormattedDateString();
                         }
 
                         return $indicators;
@@ -110,11 +107,12 @@ class DocumentsTable
                 self::getForwardAction()
                     ->label('derivar'),
                 EditAction::make(),
+                SendEmailAction::make(),
                 MediaAction::make('pdf')
                     ->label('documentos')
                     ->icon('bi-file-pdf')
                     ->color('danger')
-                    ->media(fn($record) => $record->documentFiles->map(fn($f) => asset('storage/' . $f->path))->toArray()),
+                    ->media(fn ($record) => $record->documentFiles->map(fn ($f) => asset('storage/'.$f->path))->toArray()),
 
             ])
             ->bulkActions([

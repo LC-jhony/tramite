@@ -31,3 +31,4 @@
 .fi-btn[class*="fi-color-"]:is([class*="fi-bg-color-"]) svg {
     color: inherit !important;
 }
+@source '../../../../vendor/diogogpinto/filament-auth-ui-enhancer/resources/**/*.blade.php';

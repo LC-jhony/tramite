@@ -54,7 +54,7 @@ class UserForm
 
                 Section::make('Contraseña')
                     ->icon(Heroicon::Key)
-                    ->description('Establecer contraseña del usuario')
+                    ->description('La contraseña debe tener mínimo 8 caracteres, mayúsculas, minúsculas, números y símbolos')
                     ->columns(2)
                     ->schema([
                         TextInput::make('password')
@@ -64,7 +64,11 @@ class UserForm
                             ->dehydrated(fn ($state): bool => filled($state))
                             ->required(fn (string $operation): bool => $operation === 'create')
                             ->visible(fn (string $operation): bool => $operation === 'create')
-                            ->columnSpan(1),
+                            ->columnSpan(1)
+                            ->regex('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/')
+                            ->validationMessages([
+                                'regex' => 'La contraseña debe tener mínimo 8 caracteres, una mayúscula, un número y un símbolo.',
+                            ]),
 
                         TextInput::make('password_confirmation')
                             ->label('Confirmar Contraseña')
@@ -81,7 +85,7 @@ class UserForm
 
                 Section::make('Actualizar Contraseña')
                     ->icon(Heroicon::Key)
-                    ->description('Cambiar contraseña (solo edición)')
+                    ->description('Cambiar contraseña (mínimo 8 caracteres, mayúsculas, números y símbolos)')
                     ->columns(2)
                     ->schema([
                         TextInput::make('password')
@@ -89,7 +93,11 @@ class UserForm
                             ->password()
                             ->revealable()
                             ->dehydrated(fn ($state): bool => filled($state))
-                            ->columnSpan(1),
+                            ->columnSpan(1)
+                            ->regex('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/')
+                            ->validationMessages([
+                                'regex' => 'La contraseña debe tener mínimo 8 caracteres, una mayúscula, un número y un símbolo.',
+                            ]),
 
                         TextInput::make('password_confirmation')
                             ->label('Confirmar Contraseña')
@@ -101,6 +109,7 @@ class UserForm
                     ])
                     ->collapsible()
                     ->visible(fn (string $operation): bool => $operation === 'edit'),
+
             ]);
     }
 }

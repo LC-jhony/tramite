@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Trait\HandlesPasswordChanges;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Collection;
@@ -29,6 +30,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property int|null $office_id
+ * @property Carbon|null $password_changed_at
  * @property-read Collection<int, Document> $documents
  * @property-read int|null $documents_count
  * @property-read Collection<int, Movement> $movements
@@ -56,6 +58,8 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
+    use HandlesPasswordChanges;
+
     /** @use HasFactory<UserFactory> */
     use HasFactory, HasRoles, Notifiable;
 
@@ -69,6 +73,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'office_id',
+        'password_changed_at',
     ];
 
     public function office(): BelongsTo

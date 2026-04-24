@@ -5,6 +5,9 @@ use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
 use Filament\Pages\Dashboard;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
+use FinityLabs\FinMail\Resources\EmailTemplateResource\EmailTemplateResource;
+use FinityLabs\FinMail\Resources\EmailThemeResource\EmailThemeResource;
+use FinityLabs\FinMail\Resources\SentEmailResource\SentEmailResource;
 
 return [
 
@@ -175,6 +178,24 @@ return [
                 'create',
                 'update',
                 'delete',
+            ],
+            EmailTemplateResource::class => [
+                'viewAny',
+                'view',
+                'create',
+                'update',
+                'delete',
+            ],
+            EmailThemeResource::class => [
+                'viewAny',
+                'view',
+                'create',
+                'update',
+                'delete',
+            ],
+            SentEmailResource::class => [
+                'viewAny',
+                'view',
             ],
         ],
         'exclude' => [

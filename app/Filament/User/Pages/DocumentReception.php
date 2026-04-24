@@ -2,6 +2,7 @@
 
 namespace App\Filament\User\Pages;
 
+use App\Enum\MovementAction;
 use App\Filament\Resources\Customers\Schemas\CustomerForm;
 use App\Models\Document;
 use App\Models\Priority;
@@ -43,7 +44,7 @@ class DocumentReception extends Page implements HasTable
 
     public function getTabs(): array
     {
-        $tabs = ['all' => Tab::make('All')];
+        $tabs = ['all' => Tab::make('Todos')];
 
         $officeId = Auth::user()?->office_id;
 
@@ -52,7 +53,7 @@ class DocumentReception extends Page implements HasTable
                 'documents' => function ($query) use ($officeId) {
                     $query->whereHas('movements', function ($q) use ($officeId) {
                         $q->where('to_office_id', $officeId)
-                            ->where('action', 'derivado');
+                            ->where('action', MovementAction::Derivado->value);
                     });
                 },
             ])
@@ -69,7 +70,7 @@ class DocumentReception extends Page implements HasTable
                     return $query->where('priority_id', $priority->id)
                         ->whereHas('movements', function ($q) use ($officeId) {
                             $q->where('to_office_id', $officeId)
-                                ->where('action', 'derivado');
+                                ->where('action', MovementAction::Derivado->value);
                         });
                 });
         }
@@ -96,7 +97,7 @@ class DocumentReception extends Page implements HasTable
                     ])
                     ->whereHas('movements', function ($query) use ($officeId) {
                         $query->where('to_office_id', $officeId)
-                            ->where('action', 'derivado');
+                            ->where('action', MovementAction::Derivado->value);
                     })
             )
             ->columns([
@@ -104,25 +105,22 @@ class DocumentReception extends Page implements HasTable
                     ->label('Nro. Trámite')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('currentOffice.name')
-                    ->label('Remitente')
+                TextColumn::make('latestMovement.fromOffice.name')
+                    ->label('Oficina Remitente')
                     ->searchable()
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        default => 'info',
-                    }),
+                    ->color('info')
+                    ->placeholder('N/A'),
                 TextColumn::make('type.name')
                     ->label('Tipo'),
                 TextColumn::make('subject')
                     ->label('Asunto')
                     ->limit(50),
-                TextColumn::make('latestMovement.toOffice.name')
-                    ->label('Derivado a')
-                    ->searchable()
+                TextColumn::make('latestMovement.action')
+                    ->label('Estado Movimiento')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        default => 'info',
-                    }),
+                    ->color(fn (string $state): string => MovementAction::tryFrom($state)?->getColor() ?? 'gray')
+                    ->formatStateUsing(fn (string $state): string => MovementAction::tryFrom($state)?->getLabel() ?? $state),
                 TextColumn::make('reception_date')
                     ->label('Fecha Registro')
                     ->date()
@@ -134,12 +132,11 @@ class DocumentReception extends Page implements HasTable
                     ->label('Responder'),
                 self::getRejectAction(),
                 MediaAction::make('pdf')
-                    ->label('documentos')
+                    ->label('Documentos')
                     ->icon('bi-file-pdf')
                     ->color('danger')
-                    ->media(fn ($record) => $record->documentFiles->first()?->path
-                        ? asset('storage/'.$record->documentFiles->first()->path)
-                        : null),
+                    ->media(fn ($record) => $record->documentFiles->map(fn ($f) => asset('storage/'.$f->path))->toArray())
+                    ->visible(fn ($record) => $record->documentFiles->isNotEmpty()),
             ]);
     }
 

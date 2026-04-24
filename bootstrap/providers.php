@@ -1,7 +1,13 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\Filament\AdminPanelProvider;
+use App\Providers\Filament\UserPanelProvider;
+use App\Providers\FortifyServiceProvider;
+
 return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\Filament\AdminPanelProvider::class,
-    App\Providers\Filament\UserPanelProvider::class,
+    AppServiceProvider::class,
+    FortifyServiceProvider::class,
+    AdminPanelProvider::class,
+    UserPanelProvider::class,
 ];

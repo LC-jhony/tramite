@@ -2,16 +2,18 @@
 
 namespace App\Trait;
 
+use App\Actions\ForwardDocument;
 use App\Enum\DocumentStatus;
+use App\Enum\MovementAction;
 use App\Models\Document;
 use App\Models\Office;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
 
 trait HasForwardAction
@@ -19,21 +21,36 @@ trait HasForwardAction
     public static function getForwardAction(): Action
     {
         return Action::make('forward')
-            // ->label('Derivar')
             ->color('success')
             ->icon(Heroicon::RocketLaunch)
             ->modalHeading('Derivar Documento')
             ->modalDescription('El documento será enviado a la oficina seleccionada.')
             ->modalSubmitActionLabel('Confirmar Derivación')
             ->form(self::getForwardFormSchema())
-            // ->visible(
-            //     fn(Document $record): bool => $record->wasReceived() && ! $record->isClosed()
-            // )
-            ->disabled(
-                fn (Document $record): bool => $record->wasDerivedBy(auth()->id()) ||
-                    $record->hasActionByCurrentUser()
+            ->visible(
+                fn (Document $record): bool => self::canDerive($record)
             )
-            ->action(fn (Document $record, array $data) => self::forwardAction($record, $data))
+            ->action(function (Document $record, array $data) {
+                $newStatus = match ($data['action']) {
+                    MovementAction::Derivado->value => DocumentStatus::EnProceso,
+                    MovementAction::Respondido->value => DocumentStatus::Respondido,
+                    default => null,
+                };
+
+                $currentStatus = DocumentStatus::tryFrom($record->status);
+
+                if ($newStatus && $currentStatus && ! $currentStatus->canTransitionTo($newStatus)) {
+                    Notification::make()
+                        ->title('Error de transición')
+                        ->body("No se puede pasar de {$currentStatus->getLabel()} a {$newStatus->getLabel()}")
+                        ->danger()
+                        ->send();
+
+                    return;
+                }
+
+                self::forwardAction($record, $data);
+            })
             ->successNotificationTitle('Documento derivado correctamente');
     }
 
@@ -56,8 +73,8 @@ trait HasForwardAction
             Select::make('action')
                 ->label('Acción')
                 ->options([
-                    'derivado' => 'Derivar',
-                    'respondido' => 'Responder',
+                    MovementAction::Derivado->value => MovementAction::Derivado->getLabel(),
+                    MovementAction::Respondido->value => MovementAction::Respondido->getLabel(),
                 ])
                 ->required()
                 ->native(false)
@@ -78,26 +95,7 @@ trait HasForwardAction
 
     public static function forwardAction(Document $record, array $data): void
     {
-        DB::transaction(function () use ($record, $data) {
-            $selectedAction = $data['action'];
-            $record->movements()->create([
-                'from_office_id' => $data['from_office_id'],
-                'to_office_id' => $data['to_office_id'],
-                'receipt_date' => now()->toDateString(),
-                'action' => $selectedAction,
-                'user_id' => Auth::id(),
-            ]);
-
-            $status = match ($selectedAction) {
-                'derivado' => DocumentStatus::EnProceso,
-                'respondido' => DocumentStatus::Respondido,
-            };
-
-            $record->update([
-                'status' => $status->value,
-                'current_office_id' => $data['to_office_id'],
-            ]);
-        });
+        app(ForwardDocument::class)->handle($record, $data);
     }
 
     public static function canDerive(Document $record): bool

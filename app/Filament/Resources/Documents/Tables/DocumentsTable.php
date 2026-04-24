@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Documents\Tables;
 
+use App\Enum\DocumentStatus;
 use App\Trait\HasForwardAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -12,6 +13,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use FinityLabs\FinMail\Actions\SendEmailAction;
 use Illuminate\Database\Eloquent\Builder;
 
 class DocumentsTable
@@ -48,7 +50,7 @@ class DocumentsTable
                     ->label('Origen')
                     ->searchable()
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'interno' => 'info',
                         'externo' => 'warning',
                         default => 'gray',
@@ -76,15 +78,8 @@ class DocumentsTable
                 TextColumn::make('status')
                     ->label('Estado')
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
-                        'registrado' => 'info',
-                        'en_proceso' => 'primary',
-                        'derivado' => 'warning',
-                        'finalizado' => 'success',
-                        'cancelado' => 'danger',
-                        'rechazado' => 'danger',
-                        default => 'gray',
-                    }),
+                    ->color(fn (string $state): string => DocumentStatus::tryFrom($state)?->getColor() ?? 'gray')
+                    ->icon(fn (string $state): ?string => DocumentStatus::tryFrom($state)?->getIcon()),
                 TextColumn::make('created_at')
                     ->dateTime('d/m/Y H:i')
                     ->sortable()
@@ -143,8 +138,8 @@ class DocumentsTable
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
-                            ->when($data['from'], fn($q, $v) => $q->whereDate('reception_date', '>=', $v))
-                            ->when($data['until'], fn($q, $v) => $q->whereDate('reception_date', '<=', $v));
+                            ->when($data['from'], fn ($q, $v) => $q->whereDate('reception_date', '>=', $v))
+                            ->when($data['until'], fn ($q, $v) => $q->whereDate('reception_date', '<=', $v));
                     })
                     ->columns(2),
             ])
@@ -152,6 +147,7 @@ class DocumentsTable
                 self::getForwardAction()
                     ->label('Derivar'),
                 EditAction::make(),
+                SendEmailAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

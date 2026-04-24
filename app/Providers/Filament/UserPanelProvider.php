@@ -10,6 +10,7 @@ use App\Filament\User\Widgets\UserStatsWidget;
 use App\Livewire\CustomTopNavigation;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use CrescentPurchasing\FilamentAuditing\FilamentAuditingPlugin;
+use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -20,12 +21,14 @@ use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
+use FinityLabs\FinMail\FinMailPlugin;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use YourVendor\FilamentNotificationBell\FilamentNotificationBellPlugin;
 
 class UserPanelProvider extends PanelProvider
 {
@@ -48,6 +51,7 @@ class UserPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/User/Pages'), for: 'App\Filament\User\Pages')
             ->pages([
                 Dashboard::class,
+
             ])
             ->widgets([
                 AccountWidget::class,
@@ -71,12 +75,21 @@ class UserPanelProvider extends PanelProvider
 
             ])
             ->plugins([
+                AuthUIEnhancerPlugin::make()
+                    ->formPanelPosition('left')
+                    ->emptyPanelBackgroundImageUrl('https://images.unsplash.com/photo-1554232456-8727aae0cfa4?q=80&w=2070&auto=format&fit=crop'),
+                FinMailPlugin::make()
+                    ->enableThemes(false)
+                    ->enableSentEmails(true)
+                    ->navigationGroup('Comunicaciones'),
                 // FilamentSpatieLaravelBackupPlugin::make(),
                 FilamentShieldPlugin::make(),
                 FilamentAuditingPlugin::make()
                     ->formatAuditableTypeUsing(fn (string $value): string => strtoupper($value))
                     ->navigationGroup('Settings')
                     ->navigationIcon('hugeicons-audit-02'),
+                FilamentNotificationBellPlugin::make()
+                    ->withPolling(30),
             ])
             ->authMiddleware([
                 Authenticate::class,

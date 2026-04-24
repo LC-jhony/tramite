@@ -5,6 +5,7 @@ namespace App\Providers;
 use BezhanSalleh\PanelSwitch\PanelSwitch;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -22,6 +23,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Model::shouldBeStrict(! $this->app->isProduction());
+
         FilamentColor::register([
             'primary' => Color::hex('#004f3b'),
         ]);

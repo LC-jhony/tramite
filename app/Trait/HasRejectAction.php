@@ -2,15 +2,15 @@
 
 namespace App\Trait;
 
+use App\Actions\UpdateDocumentStatus;
 use App\Enum\DocumentStatus;
+use App\Enum\MovementAction;
 use App\Models\Document;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
 
 trait HasRejectAction
@@ -24,19 +24,35 @@ trait HasRejectAction
     public static function getRejectAction(): Action
     {
         return Action::make('reject')
-            ->label('Otro')
+            ->label('Finalizar/Rechazar')
             ->color('danger')
             ->icon(Heroicon::XCircle)
-            // ->visible(
-            //     fn(Document $record): bool => $record->wasReceived() && ! $record->isClosed()
-            // )
             ->disabled(
-                fn(Document $record): bool => ! $record->wasReceived()
+                fn (Document $record): bool => ! $record->wasReceived()
                     || $record->isClosed()
                     || $record->hasActionByCurrentUser()
             )
             ->form(self::getRejectFormSchema())
             ->action(function (Document $record, array $data) {
+                $newStatus = match ($data['action']) {
+                    MovementAction::Finalizado->value => DocumentStatus::Finalizado,
+                    MovementAction::Rechazado->value => DocumentStatus::Rechazado,
+                    MovementAction::Cancelado->value => DocumentStatus::Cancelado,
+                    default => null,
+                };
+
+                $currentStatus = DocumentStatus::tryFrom($record->status);
+
+                if ($newStatus && $currentStatus && ! $currentStatus->canTransitionTo($newStatus)) {
+                    Notification::make()
+                        ->title('Error de transición')
+                        ->body("No se puede pasar de {$currentStatus->getLabel()} a {$newStatus->getLabel()}")
+                        ->danger()
+                        ->send();
+
+                    return;
+                }
+
                 self::RejectAction($record, $data);
                 self::getNotificationCreate($record)
                     ->send();
@@ -49,16 +65,16 @@ trait HasRejectAction
             Select::make('action')
                 ->label('Acción')
                 ->options([
-                    'rechazado' => 'rechazado',
-                    'finalizado' => 'finalizado',
-                    'cancelado' => 'cancelado',
+                    MovementAction::Rechazado->value => MovementAction::Rechazado->getLabel(),
+                    MovementAction::Finalizado->value => MovementAction::Finalizado->getLabel(),
+                    MovementAction::Cancelado->value => MovementAction::Cancelado->getLabel(),
                 ])
                 ->required()
                 ->native(false)
                 ->helperText(new HtmlString('selecione la <strong class="text-primary-600 font-semibold">Acción del Documento</strong> para realizar el tramite '))
                 ->hint(new HtmlString('<span class="text-rose-500 text-sm">Selecione la Acción del Tramite que realizara</span>')),
             Textarea::make('observation')
-                ->label('Motivo de Rechazo')
+                ->label('Motivo de la acción')
                 ->required()
                 ->rows(3),
         ];
@@ -66,25 +82,7 @@ trait HasRejectAction
 
     public static function RejectAction(Document $record, array $data): void
     {
-        DB::transaction(function () use ($record, $data) {
-            $selectedAction = $data['action'];
-
-            $record->movements()->create([
-                'from_office_id' => Auth::user()?->office_id,
-                'to_office_id' => $record->current_office_id,
-                'receipt_date' => now()->toDateString(),
-                'action' => $selectedAction,
-                'user_id' => Auth::id(),
-            ]);
-
-            $status = match ($selectedAction) {
-                'finalizado' => DocumentStatus::Finalizado,
-                'cancelado' => DocumentStatus::Cancelado,
-                default => DocumentStatus::Rechazado,
-            };
-
-            $record->update(['status' => $status->value]);
-        });
+        app(UpdateDocumentStatus::class)->handle($record, $data);
     }
 
     public static function getNotificationCreate(Document $record): Notification

@@ -2,14 +2,11 @@
 
 namespace App\Trait;
 
+use App\Actions\ReceiveDocument;
 use App\Enum\DocumentStatus;
-use App\Enum\MovementAction;
-use App\Models\Document;
-use App\Models\DocumentReception;
 use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 trait HasReceiveAction
 {
@@ -22,31 +19,33 @@ trait HasReceiveAction
             ->modalIcon(Heroicon::CheckCircle)
             ->color('primary')
             ->visible(
-                fn(Document $record): bool => ! $record->wasReceived()
+                fn (Document $record): bool => ! $record->wasReceived()
             )
-            ->disabled(fn(Document $record): bool => $record->wasReceived())
+            ->disabled(fn (Document $record): bool => $record->wasReceived())
             ->requiresConfirmation()
             ->modalHeading('Recibir Documento')
             ->modalDescription('¿Está seguro de recibir este documento?')
             ->action(function (Document $record) {
-                $movement = $record->latestMovement;
-                if ($movement) {
-                    DocumentReception::create([
-                        'document_id' => $record->id,
-                        'movement_id' => $movement->id,
-                        'user_id' => Auth::id(),
-                        'office_id' => Auth::user()->office_id,
-                        'reception_date' => now()->toDateString(),
-                        'movement_Action' => MovementAction::Recibido->value
-                    ]);
+                $newStatus = DocumentStatus::EnProceso;
+                $currentStatus = DocumentStatus::tryFrom($record->status);
+
+                if ($currentStatus && ! $currentStatus->canTransitionTo($newStatus)) {
+                    Notification::make()
+                        ->title('Error de transición')
+                        ->body("No se puede pasar de {$currentStatus->getLabel()} a {$newStatus->getLabel()}")
+                        ->danger()
+                        ->send();
+
+                    return;
                 }
+
+                app(ReceiveDocument::class)->handle($record);
             })
             ->after(function () use ($livewire) {
                 if ($livewire) {
                     $livewire->dispatch('refreshTable');
                 }
             });
-        // ->action(fn (Document $record) => self::ReceiveAction($record));
     }
 
     // public static function ReceiveAction(Document $record): void
