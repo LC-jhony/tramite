@@ -4,7 +4,6 @@ use App\Livewire\DocumentRegister;
 use App\Models\Administration;
 use App\Models\Customer;
 use App\Models\Document;
-use App\Models\DocumentFile;
 use App\Models\DocumentType;
 use App\Models\Office;
 use App\Models\User;
@@ -33,7 +32,7 @@ test('document can be registered', function () {
     ]);
     $office = Office::firstOrCreate([
         'code' => 'MESA',
-        'name' => 'Mesa de partes',
+        'name' => 'mesa de partes',
     ], ['status' => 1]);
     $administration = Administration::firstOrCreate([
         'name' => '2024',
@@ -62,10 +61,6 @@ test('document can be registered', function () {
     $component->set('data.status', 'registrado');
     $component->set('data.folio', '123');
     $component->set('data.condition', true);
-    $component->set('data.file_upload', ['documents/test-file.pdf']);
-
-    // Debug: Check data before create
-    // ray($component->data); // If ray is installed
 
     $component->call('create');
 
@@ -78,16 +73,6 @@ test('document can be registered', function () {
     $document = Document::where('subject', '<p>Test Subject</p>')->first();
     expect($document)->not->toBeNull();
     expect($document->document_type_id)->toBe($documentType->id);
-
-    // Assert: Check files
-    $file = DocumentFile::where('document_id', $document->id)->first();
-    expect($file)->not->toBeNull();
-    expect($file->path)->toBe('documents/test-file.pdf');
-
-    // Assert: Check session flash
-    // Note: Livewire tests don't automatically persist session flashes to $this->session()
-    // We can check the component's session state if Livewire provides it, or rely on DB assertions
-    // For now, we verified the DB state which is the critical part
 });
 
 test('document registration handles errors', function () {

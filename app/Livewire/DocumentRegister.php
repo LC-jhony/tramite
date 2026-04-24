@@ -189,8 +189,8 @@ class DocumentRegister extends Component implements HasActions, HasSchemas
         $data = $this->prepareDocumentData();
 
         DB::transaction(function () use ($data) {
-            $document = Document::create($data);
-            HasFileUploads::syncFilesStatic($document, $data['file_paths'] ?? []);
+            $document = Document::create($data['document']);
+            HasFileUploads::syncFilesStatic($document, $data['filePaths'] ?? []);
 
             $customer = Customer::find($document->customer_id);
             if ($customer && $customer->email) {
@@ -212,11 +212,15 @@ class DocumentRegister extends Component implements HasActions, HasSchemas
     {
         $data = $this->form->getState();
 
-        // Extract and remove file paths
-        $data['file_paths'] = HasFileUploads::getUploadedPathsStatic($data, 'file_upload');
-        unset($data['file_upload']);
+        $filePaths = $data['file_paths'] ?? [];
+        unset($data['file_upload'], $data['file_paths']);
 
-        return $data;
+        $documentData = $data;
+
+        return [
+            'document' => $documentData,
+            'filePaths' => $filePaths,
+        ];
     }
 
     private function customerForm(): array

@@ -18,7 +18,11 @@ class PriorityResource extends Resource
 {
     protected static ?string $model = Priority::class;
 
-    protected static string|BackedEnum|null $navigationIcon = 'iconoir-priority-high';
+    protected static ?string $modelLabel = 'Prioridad';
+
+    protected static ?string $pluralModelLabel = 'Prioridades';
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedExclamationTriangle;
 
     protected static ?string $recordTitleAttribute = 'name';
 

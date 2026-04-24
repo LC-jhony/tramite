@@ -19,7 +19,11 @@ class OfficeResource extends Resource
 {
     protected static ?string $model = Office::class;
 
-    protected static string|BackedEnum|null $navigationIcon = 'hugeicons-office';
+    protected static ?string $modelLabel = 'Oficina';
+
+    protected static ?string $pluralModelLabel = 'Oficinas';
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
 
     protected static ?string $recordTitleAttribute = 'name';
 

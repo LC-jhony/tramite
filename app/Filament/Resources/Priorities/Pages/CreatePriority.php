@@ -8,4 +8,9 @@ use Filament\Resources\Pages\CreateRecord;
 class CreatePriority extends CreateRecord
 {
     protected static string $resource = PriorityResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }
