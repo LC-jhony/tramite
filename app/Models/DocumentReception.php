@@ -1,13 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
+use Database\Factories\DocumentReceptionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DocumentReception extends Model
 {
-    /** @use HasFactory<\Database\Factories\DocumentReceptionFactory> */
+    /** @use HasFactory<DocumentReceptionFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -19,22 +23,22 @@ class DocumentReception extends Model
         'movement_Action',
     ];
 
-    public function document(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function document(): BelongsTo
     {
         return $this->belongsTo(Document::class);
     }
 
-    public function movement(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function movement(): BelongsTo
     {
         return $this->belongsTo(Movement::class);
     }
 
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function office(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function office(): BelongsTo
     {
         return $this->belongsTo(Office::class);
     }

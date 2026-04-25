@@ -1,0 +1,25 @@
+includes:
+    - vendor/nunomaduro/larastan/extension.neon
+
+parameters:
+    level: 9
+    paths:
+        - app/
+    excludePaths:
+        - app/Builders/*
+        - app/Console/Commands/*
+        - app/Exceptions/*
+        - app/Http/Controllers/*
+        - bootstrap/*
+        - database/migrations/*
+        - node_modules/*
+        - resources/*
+        - routes/*
+        - storage/*
+        - tests/*
+        - vendor/*
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        - identifier: '#^Illuminate\\Pagination#'
+        - identifier: '#^OwenIt\\Auditing#'
+    phpVersion: 80400

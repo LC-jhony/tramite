@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Enum;
 
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
+use Filament\Support\Icons\Heroicon;
 
 enum DocumentStatus: string implements HasColor, HasIcon, HasLabel
 {
@@ -42,12 +45,12 @@ enum DocumentStatus: string implements HasColor, HasIcon, HasLabel
     public function getIcon(): ?string
     {
         return match ($this) {
-            self::Registrado => 'heroicon-o-document',
-            self::EnProceso => 'heroicon-o-arrow-path',
-            self::Respondido => 'heroicon-o-chat-bubble-left-right',
-            self::Finalizado => 'heroicon-o-check-circle',
-            self::Rechazado => 'heroicon-o-x-circle',
-            self::Cancelado => 'heroicon-o-archive',
+            self::Registrado => Heroicon::OutlinedDocument,
+            self::EnProceso => Heroicon::OutlinedArrowPath,
+            self::Respondido => Heroicon::OutlinedChatBubbleLeftRight,
+            self::Finalizado => Heroicon::OutlinedCheckCircle,
+            self::Rechazado => Heroicon::OutlinedXCircle,
+            self::Cancelado => Heroicon::OutlinedArchive,
         };
     }
 

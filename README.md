@@ -70,7 +70,11 @@ DB_PASSWORD=
 - **Panel de Usuario**: `http://localhost/user`
 - **Panel de Administracion**: `http://localhost/admin`
 
-## Estructura de la Aplicacion
+## Documentación
+
+- [Manual de Usuario (Español)](MANUAL_USUARIO.md)
+- [Estructura de la Aplicación](#estructura-de-la-aplicacion)
+
 
 ```
 app/

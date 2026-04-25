@@ -16,8 +16,8 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
 
@@ -53,7 +53,7 @@ class DocumentForm
                                     ->required()
                                     ->columnSpanFull(),
                                 Select::make('user_id')
-                                    ->options(User::all()->pluck('name', 'id'))
+                                    ->options(fn () => User::query()->pluck('name', 'id'))
                                     ->default(Auth::id())
                                     ->required()
                                     ->disabled()
@@ -66,13 +66,13 @@ class DocumentForm
                                     ->dehydrated(),
 
                                 Select::make('current_office_id')
-                                    ->options(Office::where('status', true)->pluck('name', 'id'))
+                                    ->options(fn () => Office::where('status', true)->pluck('name', 'id'))
                                     ->default(Auth::user()->office_id)
                                     ->required()
                                     ->disabled()
                                     ->dehydrated(),
                                 Select::make('gestion_id')
-                                    ->options(Administration::where('status', true)->pluck('name', 'id'))
+                                    ->options(fn () => Administration::where('status', true)->pluck('name', 'id'))
                                     ->default(function () {
                                         return Administration::where('status', true)->value('id');
                                     })
@@ -89,7 +89,7 @@ class DocumentForm
                                     ->dehydrated(),
                                 Select::make('document_type_id')
                                     ->label('Documento tipo')
-                                    ->options(DocumentType::where('status', true)->pluck('name', 'id'))
+                                    ->options(fn () => DocumentType::where('status', true)->pluck('name', 'id'))
                                     ->searchable()
                                     ->preload()
                                     ->required()
@@ -116,7 +116,7 @@ class DocumentForm
                                     ->numeric(),
 
                                 Select::make('priority_id')
-                                    ->options(Priority::where('status', true)->get()->mapWithKeys(static fn($priority) => [
+                                    ->options(fn () => Priority::where('status', true)->get()->mapWithKeys(static fn ($priority) => [
                                         $priority->id => "<span class='flex items-center gap-x-4'>
                                                         <span class='rounded-full w-4 h-4' style='background:{$priority->color}'></span>
                                                         <span>{$priority->name}</span>
@@ -153,6 +153,7 @@ class DocumentForm
                     ->columnSpanFull(),
             ]);
     }
+
     public static function getNextSequentialNumber(string $field): string
     {
         $year = now()->year;
