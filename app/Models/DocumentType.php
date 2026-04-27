@@ -10,6 +10,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Auditable;
+    protected static function newFactory()
+    {
+        return \Database\Factories\DocumentTypeFactory::new();
+    }
+
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**

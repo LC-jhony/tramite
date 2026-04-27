@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
@@ -42,6 +43,11 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 class Office extends Model implements AuditableContract
 {
     use Auditable;
+    public static function factory($count = null, $state = [])
+    {
+        return \Database\Factories\OfficeFactory::new()->count(is_numeric($count) ? $count : null)->state(is_callable($count) || is_array($count) ? $count : $state);
+    }
+
 
     protected $fillable = [
         'code',

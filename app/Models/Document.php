@@ -6,7 +6,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -71,7 +70,18 @@ use OwenIt\Auditing\Models\Audit;
  */
 class Document extends Model implements AuditableContract
 {
+    protected static function newFactory()
+    {
+        return \Database\Factories\DocumentFactory::new();
+    }
+
+    public static function factory($count = null, $state = [])
+    {
+        return \Database\Factories\DocumentFactory::new()->count(is_numeric($count) ? $count : null)->state(is_callable($count) || is_array($count) ? $count : $state);
+    }
+
     use Auditable;
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
 
     protected $fillable = [
         'customer_id',

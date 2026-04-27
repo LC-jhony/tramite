@@ -8,7 +8,6 @@ use App\Models\Document;
 use App\Models\DocumentType;
 use App\Models\Office;
 use App\Models\Priority;
-use App\Models\User;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -52,7 +51,11 @@ class DocumentForm
                                     ->required()
                                     ->columnSpanFull(),
                                 Select::make('user_id')
-                                    ->options(User::all()->pluck('name', 'id'))
+                                    ->options(function () {
+                                        $user = Auth::user();
+
+                                        return [$user->id => $user->name];
+                                    })
                                     ->default(Auth::id())
                                     ->required()
                                     ->disabled()
@@ -115,7 +118,7 @@ class DocumentForm
                                     ->numeric(),
 
                                 Select::make('priority_id')
-                                    ->options(Priority::where('status', true)->get()->mapWithKeys(static fn($priority) => [
+                                    ->options(Priority::where('status', true)->get()->mapWithKeys(static fn ($priority) => [
                                         $priority->id => "<span class='flex items-center gap-x-4'>
                                                         <span class='rounded-full w-4 h-4' style='background:{$priority->color}'></span>
                                                         <span>{$priority->name}</span>
@@ -167,11 +170,20 @@ class DocumentForm
     public static function caseNumber(): string
     {
         $year = now()->year;
+        $prefix = "{$year}-";
 
-        // Generate a 5-digit random number that always starts with 0 (00001–09999)
-        $sequence = str_pad((string) random_int(1, 9999), 4, '0', STR_PAD_LEFT);
-        $randomNumber = "0{$sequence}";
+        // Get the last case number for this year
+        $lastCase = Document::where('case_number', 'like', "{$prefix}%")
+            ->orderBy('case_number', 'desc')
+            ->first();
 
-        return "{$year}-{$randomNumber}";
+        if ($lastCase) {
+            $lastNumber = (int) str_replace($prefix, '', $lastCase->case_number);
+            $nextNumber = $lastNumber + 1;
+        } else {
+            $nextNumber = 1;
+        }
+
+        return sprintf('%s%04d', $prefix, $nextNumber);
     }
 }
