@@ -88,3 +88,54 @@
 :is(.dark .fi-topbar > nav.topbar-scrolled, .dark .fi-sidebar-header.topbar-scrolled) {
     background-color: rgba(10, 16, 33, 0.5) !important;
 }
+.fi-logo {
+    font-family: var(--mia-heading-font, ui-serif, Georgia, serif);
+    font-weight: 500;
+    font-size: 1.5rem;
+    letter-spacing: -0.015em;
+    color: var(--mia-ink);
+}
+
+/*
+ * Global search reads as a quiet field rather than a control: no ring, a
+ * hairline border, and the accent only on focus.
+ */
+.fi-global-search-field .fi-input-wrp {
+    @apply bg-white border-none rounded-2xl dark:bg-gray-950;
+}
+
+.fi-no-database .fi-icon {
+    @apply text-white;
+}
+
+.fi-avatar {
+    @apply shadow-md rounded-lg;
+}
+
+.fi-btn[class*="fi-color-"]:is([class*="fi-bg-color-"]) {
+    background-color: var(--color-600) !important;
+    color: white !important;
+}
+
+.fi-btn[class*="fi-color-"]:hover:is([class*="fi-bg-color-"]) {
+    background-color: var(--color-500) !important;
+    color: white !important;
+}
+
+.fi-btn[class*="fi-color-"]:is([class*="fi-bg-color-"]) svg {
+    color: inherit !important;
+}
+
+.fi-header .fi-header-heading,
+.fi-header .fi-breadcrumbs .fi-breadcrumbs-item-label,
+.fi-header .fi-breadcrumbs .fi-breadcrumbs-item-separator {
+    @apply text-white;
+}
+
+.fi-page {
+    @apply mx-auto -mt-56 pb-24;
+}
+
+.fi-page-main {
+    @apply bg-white dark:bg-gray-950 rounded-2xl p-6;
+}
