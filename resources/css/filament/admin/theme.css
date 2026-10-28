@@ -1,0 +1,173 @@
+@import 'tailwindcss';
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@import './components/custom-data-table.css';
+@import './components/custom-section.css';
+@import './components/form-fields.css';
+@import './components/modal.css';
+@import './components/report-card.css';
+@import './components/tooltip.css';
+@import './components/top-navigation.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+/* Configuración de tema CSS-first (Tailwind v4).
+   Antes era un bloque `theme: { extend: {...} }` con sintaxis JS de v3:
+   en v4 eso no se interpreta, así que `bg-platinum` no existía. */
+@theme {
+    --color-white: #f3f4f6;
+    --color-platinum: #e8e9eb;
+
+    --container-8xl: 88rem;
+
+    --ease-smooth: cubic-bezier(0.08, 0.52, 0.52, 1);
+}
+
+
+
+.fi-avatar {
+    @apply shadow-md rounded-lg;
+}
+
+/* .fi-topbar {
+    @apply !bg-inherit ring-0 shadow-none;
+}
+
+.fi-sidebar-header {
+    @apply !bg-inherit ring-0 shadow-none;
+} */
+.es-file-upload.document-logo>div {
+    @apply w-48;
+}
+
+.es-file-upload.document-logo-preview>div {
+    @apply w-40;
+}
+
+.fi-in-text-item .group-hover\/item\:underline,
+.fi-ta-text-item .group-hover\/item\:underline {
+    @apply text-primary-600 dark:text-primary-400 font-semibold;
+}
+
+.fi-sidebar-nav {
+    scrollbar-width: thin;
+}
+
+.fi-ta-empty-state-icon-ctn {
+    @apply bg-platinum;
+}
+
+.fi-dropdown-panel {
+    @apply divide-gray-200/80;
+}
+
+.fi-badge {
+    display: inline-flex;
+}
+
+/* End Alignment sortable column enhancement */
+.fi-ta-header-cell:has(button.justify-end > svg.fi-ta-header-cell-sort-icon) {
+    padding-right: 0;
+}
+
+:not(.dark) .fi-body {
+    position: relative;
+    background-color: #E8E9EB;
+    z-index: 1;
+}
+
+:not(.dark) .fi-body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(99.6deg,
+            rgba(232, 233, 235, 1) 10.6%,
+            rgba(240, 241, 243, 1) 32.9%,
+            rgba(248, 249, 251, 0.7) 50%,
+            rgba(240, 241, 243, 1) 67.1%,
+            rgba(232, 233, 235, 1) 83.4%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.fi-ta-table:has(.is-spreadsheet) {
+    .fi-ta-row {
+        @apply divide-x divide-gray-200 dark:divide-gray-700;
+    }
+
+    .fi-ta-summary-row-heading {
+        @apply px-3 py-3;
+    }
+
+    .fi-ta-text-summary {
+        @apply px-3 py-3;
+
+        >span {
+            @apply font-medium text-gray-950 dark:text-white;
+        }
+    }
+
+    .fi-ta-text {
+        @apply px-3 py-0;
+    }
+
+    .fi-ta-text-input {
+        @apply px-0 py-0;
+    }
+
+    .fi-ta-icon {
+        @apply px-3 py-0;
+    }
+
+    .fi-ta-text-input {
+
+        .fi-input-wrp,
+        .fi-input {
+            @apply ring-0 bg-transparent shadow-none rounded-none;
+        }
+    }
+
+    .fi-ta-cell:has(.fi-ta-text-input):focus-within {
+        outline: 2px solid #2563eb;
+        outline-offset: -2px;
+        z-index: 1;
+    }
+
+    .fi-ta-col-wrp button:focus {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+}
+
+.doc-template-container {
+    color: initial;
+}
+
+.doc-template-container .overflow-x-auto,
+.doc-template-paper {
+    scrollbar-width: thin;
+}
+
+.doc-template-paper.preview {
+    zoom: 0.5;
+}
+
+@media (min-width: 1024px) {
+    .doc-template-paper.preview {
+        zoom: 0.85;
+    }
+}
+
+.doc-template-paper:not(.preview) {
+    zoom: 0.65;
+}
+
+@media (min-width: 1024px) {
+    .doc-template-paper:not(.preview) {
+        zoom: 1;
+    }
+}

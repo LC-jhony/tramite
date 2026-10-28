@@ -1,0 +1,90 @@
+@import 'tailwindcss';
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/User/**/*';
+@source '../../../../resources/views/filament/user/**/*';
+
+/* Configuración de tema CSS-first (Tailwind v4).
+   Antes era un bloque `theme: { extend: {...} }` con sintaxis JS de v3:
+   en v4 eso no se interpreta, así que `bg-platinum` no existía. */
+@theme {
+    --color-white: #f3f4f6;
+    --color-platinum: #e8e9eb;
+    --color-moonlight: #f6f5f3;
+
+    --color-translucent: rgb(255 255 255 / 0.5);
+    --color-translucent-light: rgb(255 255 255 / 0.5);
+    --color-translucent-dark: rgb(25 25 25 / 0.5);
+}
+
+.fi-body {
+    position: relative;
+    background-color: #E8E9EB;
+    z-index: 1;
+}
+
+.fi-body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(99.6deg,
+            rgba(232, 233, 235, 1) 10.6%,
+            rgba(240, 241, 243, 1) 32.9%,
+            rgba(248, 249, 251, 0.7) 50%,
+            rgba(240, 241, 243, 1) 67.1%,
+            rgba(232, 233, 235, 1) 83.4%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+:is(.dark .fi-body) {
+    position: relative;
+    background-color: rgb(3, 7, 18);
+    z-index: 1;
+}
+
+:is(.dark .fi-body)::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    right: 0;
+    background-image: radial-gradient(ellipse at top right,
+            rgba(var(--primary-950), 1) 0%,
+            rgba(var(--primary-950), 0.9) 15%,
+            rgba(var(--primary-900), 0.7) 30%,
+            rgba(var(--primary-900), 0.5) 45%,
+            rgba(var(--primary-950), 0.3) 60%,
+            rgba(var(--primary-950), 0.1) 75%,
+            rgba(3, 7, 18, 0) 100%);
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.fi-topbar,
+.fi-sidebar-header {
+    @apply bg-transparent! ring-0! shadow-none!;
+    transition: background-color 0.3s, top 0.3s;
+}
+
+.fi-topbar>nav.topbar-hovered,
+.fi-sidebar-header.topbar-hovered {
+    background-color: rgba(255, 255, 255, 0.75) !important;
+}
+
+:is(.dark .fi-topbar > nav.topbar-hovered, .dark .fi-sidebar-header.topbar-hovered) {
+    background-color: rgba(10, 16, 33, 0.75) !important;
+}
+
+.fi-topbar>nav.topbar-scrolled,
+.fi-sidebar-header.topbar-scrolled {
+    background-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+:is(.dark .fi-topbar > nav.topbar-scrolled, .dark .fi-sidebar-header.topbar-scrolled) {
+    background-color: rgba(10, 16, 33, 0.5) !important;
+}
